@@ -32,7 +32,7 @@ description: Use when designing a NEW Figma Component (atom/molecule) or doing a
 3. **Variant は最大3軸まで**（state / size / mode 程度）。それ以上欲しくなったら Boolean か別コンポへ分割。
 4. **「ある/ない」スロットは Boolean Visibility で切る**。helper / leading icon / trailing icon / action 等を別variantで作らない。
 5. **テキスト差替は Text property、子差替は Instance Swap property**。Variantで吸収しようとしない。
-6. **内側はオートレイアウト**。絶対配置（layoutPositioning=ABSOLUTE）はoverlayバッジ等の最後の手段のみ（AL計算から除外される）。
+6. **内側はオートレイアウト**。絶対配置（layoutPositioning=ABSOLUTE）はoverlayバッジ等の最後の手段のみ（AL計算から除外される）。コンポーネント内部にも隙間専用の空ノード（Spacer＝無記名・無paint・無子で幅/高さだけの間隔埋めノード）を置かない。slot間/要素間の余白は itemSpacing・padding・Boolean Visibility で畳む空き（HUGなら自動で詰まる）で表現する。Spacer禁止は画面だけでなくコンポにも適用される（原則の正典は入口 mikeneko-figma 構造系）。
 7. **色・タイポ・spacing・radius・effect は全て Variable / Style バインド**。生値（hex直書き、px直書き）禁止。
 8. **デッドスペースは設計失敗のサイン**。primary=FIXED で content より大きい値を取って下に余白が残る、counter方向に空きが出る、はやり直し（**TextField 9pxデッドスペース事件の構造的禁止**。詳細→§オートレイアウト設計＞デッドスペース禁止）。
 9. **property命名はファイル内で統一**。`property=Value` 厳守。Variant valueに **`=`/`,`/`/` を含めるとパースエラー**で全壊。Boolean は `showXxx` をファイル内で統一。
@@ -171,6 +171,7 @@ NumberStepper / Pagination / Rating / Slider 等の「**ランタイムロジッ
 - primary=FIXED で content より大きい値を入れると **下/右に常時余白** が残る。これが起きたら primary=HUG にする。
 - 例：TextField で `primary=FIXED 109px` だが content は 100px → 9px のデッドスペース。helper を Boolean visible にし、container を primary=HUG に直すと、helper 有無で 72 / 100 が自然に出る。
 - （鉄則8・§やってはいけない の「TextField事件」はこの正本を指す）
+- （本節は画面側 design-create §8(h)『auto-layout厳守逆監査』とds-editのauto-layout観点が参照するコンポ内部の機械則・正本。Spacer/デッドスペースの構造判定基準はここに集約し、各スキルは→ポインタで参照する。）
 
 #### itemSpacing と alignment の衝突
 - `itemSpacing = "AUTO"` (space-between) は `primaryAxisAlignItems` を**上書き**する。同時指定は直感に反するので、どちらかに統一。

@@ -23,6 +23,7 @@ A family of [Claude Code](https://claude.com/claude-code) **skills** for doing r
 - **構造で検証、ピクセルで合格にしない** — 偽frameや外付けTEXTは本物とスクショ一致する。レイヤー種別・プロパティ・slot利用で instance 実体を確認する。
 - **OOUI適合ゲート** — 画面＝オブジェクトのビュー（collection一覧 / single詳細）として起こし、動詞はモードレスなaction（chip / overlay / inline）にする。ビューを宣言→機械的な逆監査で、線形ウィザード退行や動詞フレーム化を構造から検出する（`proc:` 理由コードによる逃がし弁あり）。
 - **ページ編成（オブジェクト単位）** — 既定は1オブジェクト=1Page。1画面1ページの散在を防ぎ、最終ゲートで object→Page集合を実測して逆監査する。
+- **Spacer禁止/auto-layout厳守も宣言→機械的逆監査ゲート化（design-create §8(h)）** — 余白・間隔は隙間ノードでなく auto-layout の gap/padding で持つ。守れているかは見た目でなく構造（layoutMode/itemSpacing/padding 等）で判定し、`abs:` 理由コードによる逃がし弁を備える。
 - **共通スケルトンで等型化** — 5スキルを共通骨格 S0–S9（適用範囲／鉄則／標準オーダー／チーム編成／ゲート一覧／詳細／やってはいけない／関連参照）に揃え、入口 `mikeneko-figma` を共通禁止事項の唯一の正典（SOT）に集約する。
 - **マネジメント委譲** — 調査/実装/レビューはサブエージェントに振り、人間（マネージャー）は要件確定・ゲート判定・完了可否を握る。
 

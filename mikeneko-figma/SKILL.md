@@ -51,6 +51,7 @@ Figma作業はまずここで **「どれを目指すか」を判定して、自
 - **Spacer要素（余白埋め用の空frame/rectangle）は禁止。** 余白・間隔は全て
   auto-layout の gap（item spacing）と padding で制御する。固定の隙間ノードを
   挟んで見た目を合わせるのは不可。
+- **この原則は努力目標でなく機械的ゲートである。** 守れているかは見た目でなく構造（get_metadataのlayoutMode/itemSpacing/padding/fills/strokes/children/layoutPositioning）で判定する。各ワーカースキルは自分のゲートで実検証する: 画面新規作成は design-create §8(h)『auto-layout厳守逆監査』（着手前=§0表Bでauto-layout既定を宣言→実装後に全コンテナ/全隙間ノードを機械走査して逆監査）、既存編集は ds-edit 鉄則＋全件レビュー⑤⑥のauto-layout観点、**コンポーネント内部の機械則本体（sizing/デッドスペース）は figma-component-design §オートレイアウト設計＞デッドスペース禁止（TextField事件・正本）＋鉄則6『内側はオートレイアウト』が正典**。本入口は禁止原則のSOT、各スキルは一行宣言＋ここへの→ポインタで自足検証する。
 - **場当たりの線・区切りで体裁を取り繕わない。** 「右側に線を引いただけ」の
   ような根拠のないデザインは禁止。各要素の意味に沿った構図で組む。
 
@@ -154,6 +155,7 @@ Figma作業はまずここで **「どれを目指すか」を判定して、自
 | design-create | 一括承認 | §4 | フレームリスト・ビューインベントリ(表A/B)・ページIA(表C/D)・要素allowlist・proc:例外＋正当化を一括承認 | design-create §4 |
 | design-create | 最終差分監査（逆差分） | §8(e) | 宣言に無い要素が出ていない（default-deny） | design-create §8(e) |
 | design-create | OOUI逆監査 | §8(f)・配線後に再実行 | 全frameが表Bへ写像済・線形ウィザード退行が無い・collection⇄single往復が成立（構造で裏取り） | design-create §8(f) |
+| design-create | auto-layout厳守逆監査 | §8(h) | 全コンテナauto-layout・Spacer0・abs:宣言と1:1 | design-create §8(h) |
 | design-create | ページ編成逆監査 | §8 | object→Page集合の実測で散在/孤立/帰属/横断の各検査に違反0 | design-create §8 |
 | design-create | instance実体監査 | §8 | 部品がinstance実体・slot利用を構造確認 | design-create §8 |
 | e2e-test | 体験E2E（達成可否/離脱点判定） | テスト時 | 盲目セルフプレイで目的達成可否・離脱点・真因（UX欠陥か未配線か）を切り分け。設計は直さずハンドオフ | e2e-test レポート |
