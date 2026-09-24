@@ -32,7 +32,7 @@ Figmaの編集・レビューはこの手順・基準・編成で回す。実行
 6. **報告は正直に。** 残課題を隠さない。謝辞・先回りの正当化・premise未検証での remedy 約束をしない。確認→事実を直す。
 7. **見た目が部品なら実体も部品＝手描き偽装禁止（F-CMP-2→正本は入口）。** 固有運用: 着手前に②棚卸しでDS実体を索引→在れば必ず instance 化。手描きの例外は §棚卸し runbook の NOT FOUND 基準（全Nページ走査済み）＋エスカレーションのみ（その時も**既定はローカルComp化してから使用**。Comp化しない場合は台帳に`raw:<コード>`＋根拠1行を宣言（例外ノードはノード名を`raw:<コード>`に）=F-CMP-5、→入口§部品系）。検証＝§標準オーダー6 の instance実体監査、事故文脈＝§やってはいけない。DSに無い部品のComp化の寄り道先=[figma-component-design](../../skills/figma-component-design/SKILL.md)（票の呼称はdesign-createの`new-comp:`と共通）。
 8. **対象範囲にない要素を勝手に足さない＝出典default-deny／アンチブリード／良かれは提案へ（F-SRC-1・F-SRC-2・F-SRC-3→正本は入口）。** 固有の逆向き突合＝§全件レビュー(工程5・6) の逆差分監査。
-9. **編集対象は「どのオブジェクトのどのビュー（collection⇄single）か」で捉え、モードレス整合（proc退行禁止）を壊さない（F-OOUI-1〜7→正本は入口）。** 追加/変更要素が他オブジェクトへの参照やロール別の出し分けなら、既存の関係・操作権限と食い違わせない。 同じオブジェクトの操作が画面間で一貫しているのが正。ビュー種別分類・proc:新設は design-create へ委譲（§適用範囲）。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
+9. **編集対象は「どのオブジェクトのどのビュー（collection⇄single）か」で捉え、モードレス整合（proc退行禁止）を壊さない（F-OOUI-1〜8→正本は入口）。** 追加/変更要素が他オブジェクトへの参照やロール別の出し分けなら、既存の関係・操作権限と食い違わせない。 同じオブジェクトの操作が画面間で一貫しているのが正。ビュー種別分類・proc:新設は design-create へ委譲（§適用範囲）。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
 10. **余白・間隔はauto-layoutのgap/paddingで持つ＝Spacer禁止・全コンテナauto-layout（F-STR-1・F-STR-2→正本は入口。機械判定基準・監査スクリプトも入口F-STR-2）。** 固有運用: 編集・restyle・置換時は間隔を itemSpacing/padding へ移行。実検証＝§全件レビュー(工程5・6) の auto-layout整合観点。
 11. **知覚（着手前の現物スクショ確認・完了前の逐語×レンダリング突合）は委譲不可のマネージャー本務。** テキスト報告や監査pass=trueを現物確認の代わりにしない（F-INT-2→入口）。
 

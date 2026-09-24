@@ -42,7 +42,7 @@ description: Use when CREATING a new screen, flow, or frame in Figma from requir
 - **2コピー則: 実装中に同一構造を2回目にコピーしようとした時点で手を止め、`new-comp:`票でコンポ化に寄り道する（別画面への複製・同一画面の状態フレーム間の複製・画面内繰り返しのいずれも対象。単位基準の正本=[figma-component-design](../../skills/figma-component-design/SKILL.md)§コンポーネント化の単位基準）。**
 11. **検証はサンプルでなく全件被覆。** 配置した全要素＋全配線を見る・node type が `INSTANCE` か・mainComponent が想定通りか・detach されていないか・fill/typo がバインド済みか・**reactionが正しく張られているか**、を1件ずつ。
 12. **報告は正直に。** 残課題・未承認の保留事項を隠さない。先回りの正当化や未検証の約束をしない。
-13. **各フレームはオブジェクトのビューとして起こす（F-OOUI-1〜7 → [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§OOUI系が正典）。** frame=オブジェクト(名詞)のビュー(collection/single)を先に確定・動詞はモードレスなアクション・種別/区分/貸出期間/返却期限はプロパティ・状態・アクションに畳む。例外(逐次タスク)は `proc:` 理由コード宣言制（許可コード一覧は S7「手続き的フロー逃がし弁」＝本スキルが正典）。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
+13. **各フレームはオブジェクトのビューとして起こす（F-OOUI-1〜8 → [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§OOUI系が正典）。** frame=オブジェクト(名詞)のビュー(collection/single)を先に確定・動詞はモードレスなアクション・種別/区分/貸出期間/返却期限はプロパティ・状態・アクションに畳む。例外(逐次タスク)は `proc:` 理由コード宣言制（許可コード一覧は S7「手続き的フロー逃がし弁」＝本スキルが正典）。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
 
 ## 標準オーダー（0→9）
 工程番号はこの1系統のみが正本（ロールの丸数字は S5、対応はレジェンド参照）。
