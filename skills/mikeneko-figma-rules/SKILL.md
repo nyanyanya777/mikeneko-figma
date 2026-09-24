@@ -1,0 +1,133 @@
+---
+name: mikeneko-figma-rules
+description: 自作Figmaスキル全部に効く共通禁止事項（F-*ルール）の唯一の正典(SOT)＋最終ゲート対応表＋スキル成長規約。規範本文はここだけが持ち、各作業スキルは一行宣言＋ルールIDで参照する。Figmaへ書き込む前に必ずロードする。
+---
+
+# 自作Figmaスキル共通規範(SOT)
+
+> **F-TEAM-0 このスキルを通る作業は Workflow ツールでエージェントチームを組んで回す（本人指示「Figmaの作業とかには全部マストで入れてほしい」）。** 規模は small（5体未満）を既定、実装ワーカーは figma-implementer、単発の Agent 呼び出しで済ませない。
+
+**TL;DR**: [mikeneko-figma](../../skills/mikeneko-figma/SKILL.md)(入口/ディスパッチャ)から振り分けられた各作業スキル(figma-ds-edit/figma-component-design/figma-design-create/figma-e2e-test/figma-modal-open-reorg)に**共通して効く禁止事項・最終ゲート対応表・スキル成長規約の唯一の正典**。各ワーカーは全文再掲せず《一行宣言+ここへの→ポインタ》で持つ。更新はここ1箇所→全ワーカーへ伝播。Figmaへ書き込む前に必ずロードする。**F-\*** はルールID。
+
+## 共通の禁止事項(全スキル共通の正典・SOT)
+
+**全自作スキル(ds-edit/component-design/design-create/e2e-test)に効く唯一の正典(SOT)。** 各ワーカーは全文再掲せず《一行宣言+入口§への→ポインタ》で持つ。更新はここ1箇所→全ワーカーへ伝播。詳細手順は各スキル側、検証索引は「最終ゲート対応表」。**F-\*** はルールID。
+
+### 構造系
+- **F-STR-1 Spacer要素(余白埋め用の空frame/rectangle)は禁止。** 余白・間隔は全てauto-layoutのgap(itemSpacing)/paddingで制御、固定の隙間ノードで合わせない。
+- **F-STR-2 全コンテナはauto-layoutで組む。努力目標でなく機械的ゲート=見た目でなく構造(get_metadataのlayoutMode/itemSpacing/padding/fills/strokes/children/layoutPositioning)で判定する。** 検証手段:
+  - 第一手段=機械監査スクリプト `~/.claude/skills/mikeneko-figma/scripts/audit-structure.js`(use_figmaで実行。F-STR-1/2・F-QLT-2/3・F-CMP-2・F-CMP-5・F-CMP-6を機械検出)。不可時は手動get_metadata構造走査に全面フォールバック。動く場合も**スクリプト非対応の検査は常に手動併走**(正本=design-create §8(h)〔ABSOLUTE濫用/手動x/yズレ/abs:件数突合〕・ds-edit工程6〔mainComponent照合〕)=スクリプトgreenだけで合格にしない。※実Figma未実測・初回は小frameで試走。ゲート割当は→対応表。
+  - コンポ内部の機械則本体(sizing/デッドスペース)の正典=figma-component-design §オートレイアウト設計＞デッドスペース禁止(TextField事件)+鉄則6『内側はオートレイアウト』。
+- **F-STR-3 場当たりの線・区切りで体裁を取り繕わない。** 「右に線を引いただけ」等の根拠なきデザイン禁止、各要素の意味に沿った構図で組む。
+
+### 部品系
+- **F-CMP-1 アイコンボタンはアイコンも必ず指定する。** 未指定プレースホルダのまま置かず、入れるアイコン(名前/ノード)を決め実体をセット。
+- **F-CMP-2 部品はinstance実体で配置する(手描き偽装禁止)。** 生frame・外付けTEXTで部品に見せかけない。検証=各スキル最終ゲートのinstance実体監査(→対応表)で構造確認、スクショ一致で合格にしない。部品の新規設計=component-designの2ゲート(全組合せ+既存影響レビュー)が相当。
+- **F-CMP-3 マスターComp(メインコンポーネント)を編集して見た目を変えない。** 要素を消す・変種対応はインスタンス側で `visible=false`(行コンテナごと畳む)。[feedback_figma_hide_in_instance_not_master](../../docs/feedback_figma_hide_in_instance_not_master.md)
+- **F-CMP-4 強調・マーキングでコンポのfill/strokeを変えない**(全インスタンスに伝播して事故)。マーキングは外側のラッパーで囲む。`feedback_figma_component_style`
+- **F-CMP-5 完成フレーム内で視覚スタイル(可視fill/stroke/effect/cornerRadius>0)を直接持つ非INSTANCEノードはdefault-denyで不合格。** 合格は3類型のみ: (a)DSコンポのinstance(内部は当該コンポの責務) (b)無装飾のレイアウトコンテナ〔単体配置の免除・複製の免罪符でない→F-CMP-6〕 (c)台帳宣言済み例外`raw:<コード>`+「なぜコンポ化しないか」の根拠1行。宣言例外はノード名を`raw:<コード>`にリネーム(機械照合・台帳N=N突合。`abs:<コード>`も同様。コード一覧と運用の正本=design-create §raw:例外コード)。TEXTは対象外(スタイル/変数バインドはF-QLT系の責務)。「部品に見えるか」の自己認定で適用を免れない(分母=部品でなくスタイル付き全ノード)。DSに無い部品は[figma-component-design](../../skills/figma-component-design/SKILL.md)でコンポ化してから使う(票に束ねる=無断作成でない・F-PLC-3と両立)。instanceゼロ画面の監査空振り素通りを防ぐのが本ルール。〔反面教師: DSにTable実在なのに多数のノードを生描き〕[feedback_figma_raw_frame_default_deny](../../docs/feedback_figma_raw_frame_default_deny.md)
+- **F-CMP-6 重複監査(2コピー則のゲート配線): 同一構造のフレーム/グループは2回目のコピー発生時点でコンポ化する**(対象=別画面/同一画面の状態フレーム間/画面内繰返しの全部、単位=複製の最大同一範囲。単位基準の正本=[figma-component-design](../../skills/figma-component-design/SKILL.md)§コンポーネント化の単位基準)。子が全てinstanceでも**束ねる親フレームの生複製は該当**——F-CMP-5(b)の無装飾レイアウトコンテナは単体配置の免除であって複製の免罪符でない。**再利用が自明な意味単位(フィルタバー・テーブルヘッダ行・リスト項目など"部品を束ねた部品")は出現1でもコンポ化が既定**、しない場合は`raw:<コード>`宣言で理由を台帳に残す。検証=最終ゲートで同名/同構成フレームの出現数を実測(第一手段=audit-structure.jsの複製検出、不可時は手動走査)。[feedback_component_unit_two_copy_rule](../../docs/feedback_component_unit_two_copy_rule.md)〔反面教師: あるプロダクトでサイドバー生frameの複製クラスタが複数、全ゲートGREENで素通り〕
+- **F-CMP-7 コンポ化の構造監査は機械強制（F-QLT-9の構造版）。** Figma書込セッションは、最後の書込のあとに `scripts/audit-structure.js` を下表の3runで実走するまで完了不可。**順序固定〈実装 → run1 → run2 → run3〉。セッション最後のuse_figmaは必ずrun3**（Stopフックは「最後の書込以降のpass行」を見るので、run1/2で終えると中身が全部合格でもBLOCKする）。
+
+  | run | 測定範囲 | 合格条件 |
+  |---|---|---|
+  | 1. F-CMP-6範囲 | **比較相手を含む**親コンテナorページ | 検出クラスタを**全件報告**（`cmp:0`は合格条件ではない。新規ノードだけ渡すと「既存1件＋今回の複製1件」が原理的に検出不能） |
+  | 2. 親辿り（read-only・**この1本だけ自分で書く**） | run1の各メンバーid→`parent`遡上（メンバーidはviolationの`detail`「出現位置: 」以降をパース） | どのクラスタも**自分の成果物ルートの配下に無い**こと（**id一致・id接頭辞での判定は禁止**）。配下に有ればコンポ化か`raw:`宣言→run1から再走 |
+  | 3. F-CMP-5スコープ（最終） | 自分が作成/置換したノード**全部を1回で**（スクリプト冒頭の `TARGET_NODE_IDS` か `globalThis.targetNodeIds` を書き換える。**引数機構は無い**／ノード単位の分割実行は不可・ページ跨ぎのページ単位分割のみ可／ページ全体だと既存負債で必ず落ちる） | 返り値に `F-CMP-AUDIT cmp:0 fcmp5:pass` 行。summaryの`roots:`と作成/置換リストを**N=N突合**して完了報告に転記 |
+
+  cmp=F-CMP-5+F-CMP-6違反数。**判定不能1件でもfcmp5:fail＝fail-closed。** run2の突合は機械強制されない＝**人が防壁**（フックはrun3のpassしか見ない）。**応答への復唱では立たない＝実行痕跡をStopフック `~/.claude/hooks/visual-gate-stop.sh` が照合する。** **視覚判定(F-QLT-6/7)は代替にならない**——生フレームは「見た目が正しく出る」ので視覚ゲートを素通りする（事故3件の共通機序）。**免除語彙・逃がし弁・復旧手順（`raw:`台帳の書式を含む）の正本はフックのブロック文言 `~/.claude/hooks/msg/struct-block.json`**（強制ロジックと同じ場所で更新されるので腐らない＝散文で写さない。ブロックされたら表示される）。**違反は機械判定の一次情報であって判決ではない**（現物を開いて同一か確認してから2コピー則を適用）。機序・既知の限界3点・事故記録は [reference_cmp_audit_mechanics](../../docs/reference_cmp_audit_mechanics.md)。
+
+### 配置系
+- **F-PLC-1 置き場所のページは判定根拠を持って決める。** 既存の同種フレームがあるページ or 対象機能のページに置く。該当無し・複数候補で割れたら着手前にユーザー確認、自己判断で空きに置かない。ページの具体化はF-PLC-4("どのオブジェクトのPageか")。
+- **F-PLC-2 node-id指定はそのノードをin-placeで編集(複製・横並び禁止)。Page指定はそのPage上に作る。** 「別ページに作って」は同一ページ内の新フレームでなく新規Page。[feedback_figma_target_node](../../docs/feedback_figma_target_node.md) [feedback_figma_page_vs_frame](../../docs/feedback_figma_page_vs_frame.md)
+- **F-PLC-3 不在断定・勝手な新規コンポ/要素の作成・重複作成は禁止。** 作る前に既存DSの有無を必ず確認(検索/一覧の空振りは「無い」の証拠でない。存在だけでなくslot/プロパティのcapabilityまで読む)。[feedback_verify_absence_before_creating](../../docs/feedback_verify_absence_before_creating.md)
+- **F-PLC-4 既定のページ単位=オブジェクト(≒実務の"機能"。1オブジェクト1Page・散在禁止・宣言→逆監査)。** そのオブジェクトのcollection(一覧)/single(詳細)/全状態/モードレスなアクション派生を同一Page内に並べる。「ストーリー/フロー単位」でPageを切らない(フローはプロトタイプ配線で表現)。「1画面=1ページ」の散在禁止(違反シグナル=ビューの複数Page跨り・1frame Pageの連続)。新規Pageは"新しいオブジェクト"登場時だけ(F-PLC-2の2原則は不変)。配置IAは着手前に宣言→最終ゲートでobject→Page集合を実測し逆監査(決定ルールと手順=design-create §ページ編成ガイド/§8(g))。
+- **F-PLC-5 複製・新規作成の配置先ページは、対象node-idを`get_metadata(nodeId=対象)`で個別に問い合わせて所属ページIDを事前特定し、それを配置先の唯一の基準にする(事前特定は補助、下記の事後検証が主防壁)。** `get_metadata`(nodeId省略)の「トップレベルページ一覧」やuse_figma内`figma.currentPage`への暗黙依存は、Figmaデスクトップで現在アクティブなページしか返さない/そこに追加する疑いがあり(原因は未確証・現象は実測で再現: 複数ページ中1ページしか一覧に出ず、複製がそのページに作られた)、対象ページの実在確認・配置先決定の根拠にしない。事前特定が失敗/空(対象が同セッション新規作成でページ未確定、get_metadataエラー等)ならfail-closedで着手しない。作成・複製後は生成物のnode-idに対して再度`get_metadata(nodeId=生成物)`を実行し、返る所属ページIDが事前特定した対象の所属ページIDと完全一致することを確認してから完了報告する(事前特定〜作成の間のアクティブページ切替レースはこの事後検証で捕捉する)。不一致なら同一ページへ移動(`appendChild`等)し再確認、**それでも2回不一致ならユーザーに報告して停止**(無限リトライ・黙殺禁止)。〔反面教師: 「同じページに複製」指示に対しget_metadataの一覧に出た唯一のページ(実際は無関係な別ページ)に複製が作られ、ユーザー指摘で発覚〕`feedback_figma_page_membership_unverified`
+- **F-PLC-6 SOT(本ファイル=mikeneko-figma-rules)への恒久ルール追加・変更は、内容が軽微(検証手順の追加等)でも、着手前または反映前にFableアドバイザーへの相談を既定とする。** 全Figma作業に波及し誤りが静かに伝播するため、「軽微だから自己判断でスキップ」は不可(この規約自体が事後承認で成立)。
+
+### 出典系(スコープ膨張・文脈ブリード対策)
+
+「良かれと思って足す」は本人に違反と見えず自制で止まらない→意図ベースの禁止でなく、**出典ベースのゲート**で縛る。
+
+- **F-SRC-1 項目を決めるのは本人。出典の無い要素は置かない(default-deny)。**（後の改定。本人逐語「項目とかは僕が決めるから、やめて勝手に作るのは。」「一覧画面で勝手にタブ変えてたり、何か必要ない編集機能出せたりしてるよ」、AskUserQuestion 回答「議事録の項目は置いてよい」）
+  - **要素（項目・タブ・ボタン・列・欄・パネル・編集操作）が画面に在ってよい出典は3つだけ**: **user**(このセッションの本人の逐語。AskUserQuestion の回答を含む)／**req**(議事録・要件文書の逐語＋ファイルと行)／**existing**(このサービスの既存画面の node-id。既存の項目は残す=default-keep)。「フォームは指定フィールドが全て、それ以外は無い」が既定。
+  - **ds**(DS既定)・**placeholder**(データの仮値・未確定文言の仮置き)・**primitive-def**(基底定義) は、上の3つで在ることが決まった要素の見た目・値の根拠であって、要素を増やす根拠にならない。
+  - **出典にならないもの**: inherent(「この種の画面なら普通ある」)／guess・推測・INFER／brief(自分のブリーフ・自分の判断)／REF・参考サービス・lazyweb(見た目と配置の参考であって、そこにあるタブや機能を足す根拠ではない)／similar。これらしか書けない要素は作らず、AskUserQuestion で1問聞く。他の出典と同じ行に並べても通らない（事故: 設計書の同じ行に「並び替えのタブ化は brief」由来の要素と existing が同居していた。別の設計書でもサイドパネルの追加タブが既定の保管場所の existing と同じ行に REF で入っていた）。
+  - 文言も同じ: user/req/existing に無い語は placeholder のまま置いて質問に積む（`feedback_never_invent_ui_copy`）。
+  - **機械強制**: `~/.claude/hooks/item-provenance-pretool.sh`（実装ワーカーに渡すブリーフと、ブリーフが参照する設計書 .md に上の「出典にならない」語が1行でもあれば exit 2。免除の書式は無い）／`~/.claude/hooks/undecided-not-evidence-pretool.sh`（UI要素の追加指示には `ADD-SRC: user-verbatim "…"`／`ADD-SRC: req "…" <path>`／`ADD-SRC: existing <node-id>` が必要。引用は transcript・ファイルと照合し、追加する項目の語が引用に出てくること）。
+- **F-SRC-2 他案件の情報は出典にならない(アンチブリード)。** 記憶・文脈・別プロジェクトの要素を混ぜない(例: 備品貸出アプリ（架空の例）の項目を無関係な会員登録に足す)。出典は"今回の要件"と"このサービスの参照画面"だけ。ロードされた他案件の記憶は背景情報でありソースでない。
+- **F-SRC-3 「良かれ」は行動でなく提案へ逃がす。** 良いと思った要素は勝手に置かず、チャットに「提案」として別枠で出しユーザーの判断を仰ぐ。
+- **F-SRC-4 ユーザーが要件で明言した要素・見せた現物(スクショ/フロー)は最上位の出典——レビュアーや1フレーム突合の「ここに無い=発明」で消さない。** existing=整備済み1フレームに限らず、やり取りで見せた画面/フロー/ウィザードも現物出典。代理シグナルを一次SOT(ユーザー逐語)より上に置いた削除=破壊系事故。明言スコープ(「全部網羅しろ」等)の削除は一次情報(ユーザー要求+参照物)で確証してから。[feedback_reviewer_claims_are_inputs_verify](../../docs/feedback_reviewer_claims_are_inputs_verify.md)〔反面教師: 「返却ボックス/代理返却」を「該当frameに無い」だけで削り網羅落ち〕
+- 検証は要素allowlist宣言→逆差分監査(→対応表。宣言に無い要素は削除かエスカレーション)。
+
+### OOUI系(オブジェクトのビューとして起こす)
+
+意図ベースの「OOUIで作れ」は効かない(生成時にAIは自分を正当化済みで違反が透明)→出典ゲートと同型の**宣言→機械的逆監査**で縛る。ゲートはdesign-create側、ここは原則の宣言のみ。
+
+- **F-OOUI-1 新規画面/フローは「何のオブジェクト(名詞)の・どのビュー(collection一覧/single詳細)か」を先に確定してから起こす。** 各フレーム=オブジェクトのビュー。**確定はオブジェクト名で止めず、各ビューに `PRIME: <語>` を1つ、そのプロダクトの利用者向け既存ラベル語彙で同時に宣言する**(社内呼称・専門語・自作の造語は不合格)。PRIME=そのビューを開いた利用者が最初に確認しに来る値/項目——F-OOUI-1本体=スコープ(何のビューか)、PRIME=そのビュー内の優先順位と語彙。逆監査=宣言PRIME(または同一指示対象の既存ラベル)が、当該フレームの先頭ブロック内に、かつ「最大の文字サイズ」か「そのブロック唯一の強調」のいずれかで実在するか。
+- **F-OOUI-2 動詞はビュー上のモードレスなアクション**(chip/overlay/inline編集/その場で完結し元ビューへ戻るmodal)。**独立画面・ステップ・ウィザードにしない。退行禁止**: 「貸出方法[即時/予約]を選ぶ」選択画面、Nステップウィザード、モード地獄(後戻り不可)。
+- **F-OOUI-3 種別/区分/貸出期間/返却期限は"オブジェクト"でなくプロパティ・状態・アクション**として畳む。動詞・手続き・選択肢をオブジェクトに昇格させない。
+- **F-OOUI-4 段を畳んでも、段が提供していた"選択肢/能力"は残す(網羅落ち禁止)——「段を消す」と「選択肢を消す」は別物。** OOUI化で無くすのは逐次のモード選択ステップだけで、段が与えていた方式・オプション(例: 返却方法=窓口/返却ボックス/代理返却)はインラインのプロパティ/セグメント切替で全部残す。明言された選択肢を落とせばモードレス化達成でも不合格。〔反面教師: 段と共に返却ボックス・代理返却を削り窓口1本化→[feedback_keep_stated_core_verify_fully](../../docs/feedback_keep_stated_core_verify_fully.md)〕
+- **F-OOUI-5 逃がし弁あり**: 本質的に逐次なフロー(認証/決済commit/不可逆確認/初回オンボ等)は例外だが、閉じた理由コード付きの宣言制(黙って退行しない)。詳細ゲートと許可コードはdesign-create側。
+- **F-OOUI-6 オブジェクト同士の関係は、画面に出す前に宣言する。** 他オブジェクトへの参照・遷移・関連一覧は、from/to・関係名・多重度(1:1/1:N/N:N)・画面上の現れを先に宣言してから作る。関係名は利用者向け既存ラベル語彙(F-OOUI-1 PRIMEと同じ縛り)。関係を独立オブジェクトに昇格させない(F-OOUI-3)。逆監査=画面上の他オブジェクト参照がすべて宣言に写像され、宣言した各関係が画面に実在する(双方向)。
+- **F-OOUI-7 誰がどのオブジェクトに何をできるかを、画面に出す前に宣言する。** ロール×オブジェクト×操作ごとに「できる/見るだけ/できない」を先に宣言する。ロール名は本人逐語・議事録・既存画面・PRD「4.3 利用者×権限」にあるものだけ(無ければ作らず聞く)。逆監査=「見るだけ/できない」の各行が、そのロールの画面で非表示・無効化・権限不足状態のいずれかとして現れる。
+- 順序: オブジェクト→関係・操作権限(F-OOUI-6/7)→ビュー(F-OOUI-1)。ビューは宣言したオブジェクト・関係・操作権限から導く。
+- PRDがある案件は、関係=PRD「8.3 関係」「8.4 多重度」、権限=「4.3 利用者×権限」を写す(Figma側で考え直さない)。
+- 詳細はdesign-createへ(先行宣言は判定§に前掲)。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
+
+### 品質系
+- **F-QLT-1 AIっぽい過剰な配色・装飾をしない。** 色は見栄えで選ばず、DSのセマンティックトークン+実務の実カテゴリを根拠にする。[feedback_no_ai_arbitrary_colors](../../docs/feedback_no_ai_arbitrary_colors.md)
+- **F-QLT-2 コントラストはWCAG AA未満を出さない。** 「満たしている」と言う前に実測で確認。[feedback_verify_quality_by_measuring](../../docs/feedback_verify_quality_by_measuring.md)
+- **F-QLT-3 文字サイズは14pxを下限とする。** 独自に14px未満を作らず、DSのtype styleを使う。
+- **F-QLT-4 複数案・別案は色やフォントの再着色でなく、構造・IA・見せ方から別物にする。** [feedback_design_presentation_not_reskin](../../docs/feedback_design_presentation_not_reskin.md) [feedback_multiple_concepts_structure](../../docs/feedback_multiple_concepts_structure.md)
+- **F-QLT-5 生値(hex・意味付き直px等のraw値)を直書きしない。** 色・タイポ・spacing・radius・effectはVariable/Styleバインドで持つ(変数が無ければ定義してから使う)。**テキストは名前付きテキストスタイルを"丸ごと"バインド(textStyleId適用)＝フォントだけ/サイズだけ/一部セグメントだけの部分バインド・手動一致・生フォント据え置きは全て不合格。** 専用サイズ段が無くても近い段を当て据え置かない(迷えば実装前に相談。ワーカーが独断で中核要件を弱い成果物に降格しない)。決定論監査＝`scripts/audit-ds-binding.js`(BIND-TEXT-1未バインド/BIND-TEXT-2部分適用/BIND-FILL/BIND-STROKE生値。use_figmaで実行し pass=true が完了条件)。[feedback_css_use_variables](../../docs/feedback_css_use_variables.md) [feedback_figma_always_bind_text_style](../../docs/feedback_figma_always_bind_text_style.md)
+- **F-QLT-6 完成度ゲート（ワイヤー止まり禁止）。** ここでの「ワイヤー」は**ビルド完了後の最終視覚成果物が平坦なまま**の状態を指す（塗り・階層・タイポの視覚設計が無い）。着手前にチャットで構造合意する中間ワイヤー（F-PRC-1）は正当な工程で、これを禁じるものではない——禁止対象は"最終成果物がワイヤー止まり"であること。ビルド完了前に最終スクショを自分の目で見て、(a)主導線が塗り/サイズ/コントラストで主役化されているか (b)全要素が「白カード＋細線」で等価に平坦に並んでいないか (c)明度階層(muted/subtle/accent/foreground等)の差が実際に効いているか (d)タイポ階層(見出し/本文/補助ラベルのサイズ・ウェイト・色差)、を確認する。「情報が置いてあるだけ」で視覚設計が無い=不合格。**規約合格(F-QLT-1〜5)・スクショ一致・WCAG AA合格・OOUI適合・レビュアー致命0は、いずれも"完成デザイン"の代理指標にしない**——それらは全部緑でも平坦なワイヤーになり得る。独立レビュー＋自分の目で「完成デザインか、まだワイヤーか」を厳しく判定し、ワイヤー的なら塗り/階層/余白/タイポを追い込んでから完了とする。委譲時はブリーフに「合格ライン=DS規約合格ではなく完成プロダクトデザインとして成立」を明記。[feedback_no_avatar_icons](../../docs/feedback_no_avatar_icons.md) [feedback_design_presentation_not_reskin](../../docs/feedback_design_presentation_not_reskin.md) [feedback_verify_quality_by_measuring](../../docs/feedback_verify_quality_by_measuring.md)〔反面教師: ある画面（架空の例、備品貸出アプリの備品詳細）を"DS規約順守タスク"として委譲→変数バインド/AA/OOUI全緑・レビュー致命0で合格印を押したが、白カード＋細グレー線＋中立色の平坦なワイヤー止まりでユーザー却下〕
+- **F-QLT-7 既存プロダクトとの一貫性ゲート（既存画面=視覚SOT）。** 既存プロダクトの画面を新規/刷新するときは、**既存の姉妹画面（実アプリ or 既存Figma画面）を視覚SOTに固定**し、それに揃える。**双子の同定（着手前ハードゲート・自己PASS封じの起点）: 姉妹＝"同一OOUIビュー種別"（一覧/単一詳細/編集）の既存画面のみ。作る画面のビュー種別を要件だけから先に確定し、同種別の既存画面だけを双子候補にする——一覧画面は詳細画面の双子に成り得ない（by construction。同一オブジェクトでも種別不一致なら不適格）。DSファイルのfileKeyは視覚基準＝TWIN不適格。同種別の既存画面がゼロなら合成せずfail-closedで基準画面を1問。選んだ双子は `TWIN: <fileKey>/<node-id>（view=種別・なぜ双子か1行）` で宣言し、完了前の並置目視ゲートはこの宣言TWINと同一node-idで行う（有利な比較相手の後付け選択を封じる）。** DSファイルの部品・トークンは"実装の語彙"であって"見た目の基準"ではない——**DSファイル単独で起こすと実アプリと別物になる**。着手前に姉妹画面を自分の目で見て言語を抽出する: 色の使い所（アクセントだけか／塗り面に使うか）・カード様式・バッジ形状・余白リズム・アプリ枠（サイドバー等）の有無。その語彙の"中で"作る。完了前に成果を**姉妹画面の隣に並べて「同じプロダクトに見えるか」を目視ゲート**——並べて別物＝不合格。アクセント色（青等）を大きな塗り面/帯へ転用する等、**既存言語に無いdeviceの発明は不合格**（"ワイヤーを脱する"名目でF-QLT-6を満たそうと派手なdeviceを足すのは典型的失敗）。委譲時はブリーフに姉妹画面のnode-id/画像パスを渡し「これに揃える・DSファイル単独で起こすな」を明記。**姉妹画面自体が平板/未成熟な場合の板挟みはF-QLT-6優先**（一貫性＝欠陥の踏襲ではない。言語・構造は揃えつつ忠実度は上げてよい。ただしその新表現が既存言語の"自然な延長"に留まるか＝浮くdeviceの発明でないかは自分の目で判定）。[feedback_figma_ground_on_sibling_screens](../../docs/feedback_figma_ground_on_sibling_screens.md) [feedback_qa_real_user_outcome](../../docs/feedback_qa_real_user_outcome.md)〔反面教師: ある画面（架空の例、備品貸出アプリの備品詳細）を別プロダクトのDSファイル単独で起こし、既存の備品一覧／予約ダイアログの視覚言語（色の使い方・カードの質感）とかけ離れた画面を出力→劣化・浮きでユーザー却下〕
+- **F-QLT-8 業界ベンチマークreportゲート（lazyweb）。** 完了宣言前に最終スクショ＋プロダクト文脈＋ゴールで `lazyweb_generate_report`（新規画面=objective:'create'）を実行し、返る全所見に**処分**——(a)修正済み (b)根拠付き棄却（一次情報で反証。破壊系所見は既定棄却=reviewer方針） (c)ユーザーへエスカレ——が付くまで完了不可。**所見は入力であって判決ではない**: report良好は完成の根拠にならず（F-QLT-6/7は別途必須）、所見がTWIN一貫性・ユーザー逐語要件と衝突したら逐語とF-QLT-7が常に勝ちエスカレ行き。**lazyweb不通時の自動スキップ禁止**——`lazyweb_health`確認→再試行→ユーザーエスカレのみが免除経路（fail-closed。黙ってスキップして完了にしない）。**ハードゲート性は「所見に従う義務」でなく「全所見に処分を付ける義務」に張る**（処分表が埋まるまでブロック＝ハード、根拠付き棄却が正規の処分＝"入力扱い"と両立）。役割分担: F-QLT-6=脱ワイヤー完成度／F-QLT-7=自プロダクト一貫性／**F-QLT-8=業界実参照ベンチマーク**（同じ最終スクショを見るが判定者・比較対象が別。lazyweb reportをFableに再判定させる二重化は禁止＝約15倍則）。所見の処分はメインが行い、判断が割れる残余だけFableへ。**着手前の参照探索＝原画化は対のF-PRC-11が担う**（本ルールは完了時ベンチマーク専管）。各スキルの実行手順・完了報告テンプレ行は当該スキル側。[feedback_reviewer_claims_are_inputs_verify](../../docs/feedback_reviewer_claims_are_inputs_verify.md) [feedback_qa_real_user_outcome](../../docs/feedback_qa_real_user_outcome.md)
+- **F-QLT-9 ビジュアル判定の配管化（F-QLT-6/7の実施証跡）。** Figma書き込みツール（`use_figma`/`generate_figma_design`/`create_new_file`）を1回でも成功させたセッションは、完了報告に `F-QLT-6 verdict:<fable|opus>/<task-id>/<pass|fail>` と `F-QLT-7 verdict:<fable|opus>/<task-id>/<pass|fail>` の2行が必須。judgeは**Fableのみ**、Fableが起動できない場合に限り `fable-fail:<task-id|エラー原文>` を併記した**最新Opus**（`model:"opus"` を明示・手順はFableと完全同一＝実スクショ直渡し、F-QLT-7は宣言TWIN/姉妹画面のスクショも同梱、複数画面は1回に束ねる）を認める。sonnet/figma-reviewer/自分の目でこの枠は埋まらない＝「未実施」で完了不可（F-PRC-8の3値をそのまま適用）。**トリガは「ビジュアル判定が要る案件か」の自己申告でなく「書き込みを呼んだか」の機械検出**（自己申告にすると毎回そこが飛ぶ。書込ゼロのセッションだけが自動免除・免除宣言の口は設けない）。強制は散文でなくStopフック `~/.claude/hooks/visual-gate-stop.sh`（書込検出＋judge起動の完走＋verdict行を機械照合）。**書込検出はサブエージェント(isSidechain)内の呼び出しも数える**——Figma書込はワーカー委譲が既定運用なので、main限定にすると主要経路で検出漏れになる。**judge=opus は `fable-fail:` 併記が無ければBLOCK**（Fableを試さず安い方へ逃げる経路を塞ぐ）。**他Stopゲートとの多重違反時に `stop_hook_active` で無条件ALLOWにならないよう、セッション毎のブロック回数上限(5)まで再評価する**（上限超過のみfail-open＋ログ）。〔反面教師: 見た目の完成度が判定対象の案件でレビューを2回ともSonnetで回しFableに一度も見せないまま進行。散文としては既に必須だったが止まらなかった〕[feedback_visual_gate_must_be_fable](../../docs/feedback_visual_gate_must_be_fable.md)
+
+### 進め方系
+- **F-PRC-1 新規ビルドは着手前にチャットでワイヤー(構造)を出して合意してから起こす。** 手描きで進めない。[feedback_figma_use_real_components](../../docs/feedback_figma_use_real_components.md)
+- **F-PRC-2 画像/デザインの参照・再現の委譲は、"画像を見られるモデル"のサブに実画像ファイルのパスを直接渡してReadさせる**(Agentツールの`model`=画像対応を指定)。テキスト書き起こし渡し(劣化・伝言ゲーム)は最後の手段。ユーザー提供スクショはDesktop等にファイル実体で在る(`source:`パス)——パスをブリーフに入れサブ自身の目で見させる。
+- **F-PRC-3 成果はFigma上に直接書き戻す。** HTMLモックやローカルファイルで出さない。[feedback_figma_output](../../docs/feedback_figma_output.md)
+- **F-PRC-4 文言は自然な日本語で。** 見出し・キャッチに読点を入れすぎない、翻訳調・AI調は避ける。[feedback_japanese_punctuation](../../docs/feedback_japanese_punctuation.md) [feedback_natural_japanese_copy](../../docs/feedback_natural_japanese_copy.md)
+- **F-PRC-5 全称スコープ（すべて/全部/全ページ）を勝手に狭めない。** 「すべてのコンポーネントに〜」等は対象＝ファイル全ページ（or 明示された全範囲）。直近作業中の1ページ/サブセットに縮小しない。狭めるなら着手前に「対象は◯◯ページ群でよいか」を明示確認（スコープ確認を"次元"だけにして"ページ範囲"を確認しないのは違反）。全数監査は**全ページ loadAsync してページ横断**で取り（off-pageマスターのインスタンス子は未ロードだと列挙漏れ＝件数が揺れる）、完了前に「宣言範囲の全ページ集合 vs 実処理ページ集合」を双方向diff。1ページ緑=完了にしない。[feedback_bind_all_scope_no_narrowing](../../docs/feedback_bind_all_scope_no_narrowing.md)〔反面教師: あるプロダクトで「全コンポーネントにバインド」goalを作業中1ページだけ監査し完了報告→キット別ページのInput等が丸ごと未バインドで網羅漏れ〕
+- **F-PRC-6 Figma URL/node-id の対象スコープを勝手に1レベルに固定しない(拡大も縮小も禁止)。** スコープは固定3択でなく**指定node-idの「祖先チェーン」から選ぶ1段**とみなす: `指定ノード自身 → それが属する画面(1つの完結した画面フレーム) → その画面が乗るキャンバスページ(ページ上の全画面) → ファイル(全キャンバスページ)`。node-idはチェーン上の1点を指す座標にすぎず、どの段が意図かを決めない。
+  - **段の確定は名詞スコープ語だけで機械的に。** 「把握して/理解して/見て/確認して」等の**動詞はスコープの設定・拡大の根拠にしない**(動詞の丁寧さで網羅へ広げるのが事故の抜け道)。名詞語が段を一意に固定していれば従い確認不要。固定していなければ(bare「このページ/全部/全体」や、名詞語ゼロで動詞＋node-idのみ)**needs inputで、実際の祖先チェーンをフレーム名＋各段が含むもの(分かればフレーム数)付きで提示し1問確認**。**「ページ」を機械的にキャンバスページと同一視しない**(プロダクトの「画面」を指すこともある)。
+  - **判断根拠はユーザー逐語のみ。直前の指摘/叱責の方向(拡大寄り/縮小寄り)でブレさせない**(過補正で真逆へ振らない)。
+  - **ゲートは読み取り/把握・委譲(fan-out)・編集/実装のどれにも等しく着手前に先行。** 確定前に読み・委譲・実装しない。
+  - **聞かなくてよい例外**: ①具体URL/nodeを複数明示列挙→和集合で確定(段分類しない) ②クエリ型(あるコンポ/スタイルの使用箇所を洗い出す等・空間封じ込めでない)→範囲は自明にファイル全体 ③node-id無しファイルURL→対象はファイル ④同一URL/nodeで直近セッション内に確定済み→範囲変更を示す語が無ければ再質問しない。
+  - 〔反面教師 同件で複数回→ node-id URL(node 123:456="Content")を一度ファイル/ページ全体へ拡大、次に逆に1フレームへ縮小、と両方向で誤判定〕[feedback_figma_url_scope_page_vs_file](../../docs/feedback_figma_url_scope_page_vs_file.md)
+- **F-PRC-7 Figmaの実装/デザイン委譲はデザイン系エージェント＝Opusで回す。Sonnetに格下げしない。** figma-implementer 等はデザイン系（frontmatterでOpus設定済み）。Agentツール呼び出しで `model:"sonnet"` を渡さない——model省略でfrontmatterのOpusを効かせるか、確実を期すなら `model:"opus"` を明示。**「実装委譲=Sonnet」の一般則はデザイン系には適用しない**（デザイン系だけOpus）。視覚階層・既存言語への適合・レイアウト判断はモデルの地力が直接効くので、格下げは品質を直撃する。[feedback_figma_ground_on_sibling_screens](../../docs/feedback_figma_ground_on_sibling_screens.md)〔反面教師: figma-implementer に `model:"sonnet"` を渡してOpus→Sonnetに格下げ、接地不良ブリーフと相まって実アプリと別物の劣化出力〕
+- **F-PRC-8 レビュー結果は{合格+証拠 / 不合格 / 未実施}の3値のみ。エラー・タイムアウト・無応答は「未実施」＝完了不可(黙って通さない)。** 完了ゲートでは起動したレビュー数N＝戻ったverdict数Nを件数突合し、1件でも欠けたら不合格(欠席裁判の禁止)。Nに数えるのは独立した別エージェント(figma-reviewer/Fable等)のverdictのみ——メイン自身の「もう一度確認した」はレビューに数えない(F-QLT-6の「自分の目の最終確認」は別の追加義務であり代替でない)。
+- **F-PRC-9 順序=決定論監査→判断レビュー。** `audit-*.js`等の決定論監査(スクリプト不可時はF-STR-2の手動フォールバック走査)がredのうちは判断レビュー(figma-reviewer/Fable)を起動しない——直してgreenにしたものだけ回す。redのまま判断レビューを先出しして「レビュー通過」の代理指標を作らない。
+- **F-PRC-10 実装完了報告の受入証拠は2点とも必須: (a)決定論監査の生出力(pass=true。スクリプト不可時はF-STR-2手動走査の生ログ) と (b)成果物(対象frame/画面)の実スクショ。** 片方でも欠けたら差し戻し(「時間が無いので今回は片方だけ」等の例外を作らない)。2点は必要条件であって合格の十分条件でない(合否判定はF-QLT-6/7等の各ゲートが行う)。
+- **F-PRC-11 参照ファースト＋原画化（REF宣言）。** デザイン判断を伴う着手前に `lazyweb_search`（2〜6語の具体UIパターン名＋platform）で実参照UIを1〜3件取得し、**REF宣言**として固定してから設計工程に入る。各件=①検索クエリ ②参照名 ③「なぜ良いか」の根拠1〜3行（レイアウト構造・階層・視線誘導・情報密度など"構造の言語"。「きれい」等の印象語のみは不合格＝ここが"原画化"の本体） ④流用候補要素の `[REF:参照名]` タグ。**REF宣言なしで設計工程に入らない。** **画面・フローを起こす／刷新する作業（design-create・ds-editの刷新）は二段で探す（後の改定）**: (1)サービス段=作るプロダクトに近い実在サービスを WebSearch で2〜3件挙げる（検索語の業種・対象ユーザーは要件／PRD／本人逐語の確定事項から取る・推測禁止。各件に実在プロダクト名＋自分が見た画面のURL必須、出典の無い候補は持ち帰らない） (2)UIパターン段=上記の `lazyweb_search`。(1)で挙げたサービスの該当画面も参照候補に入れ、同じ4項目のREF宣言に固定する。**案件に DESIGN.md（`mikeneko-design-md` の成果物）が在れば、この工程で必ず読む。** 新規サービス（既存画面もDSも無い）は先に `mikeneko-design-md` を回す。ds-editの機械的編集・component-designは従来どおり(2)のみ。ヒット0件はクエリ2本以上の空振り記録＋ユーザー報告で代替（検索空振りは不在の証拠でない）。platformはプロダクトの確定事項から取る（推測禁止。例: あるプロダクト=desktop）。**参照は視覚SOTではない**——視覚SOTは常にTWIN（F-QLT-7）、REFは"設計根拠の供給源"。合格テスト＝「実装時に参照スクショを見返さなくても根拠1〜3行から同じ判断が再現できるか」。**REF は見た目と配置の参考だけで、要素の出典にはならない（後の改定・F-SRC-1）。** 参照サービスにあるタブ・編集操作・パネルを足したくなったら作らずに本人に1問聞き、回答の逐語（user）を出典に書く。「承認済み[REF:]」の合格語彙は廃止。**REF宣言は設計判断用の別ファイルに置き、実装ワーカーに渡す設計書・ブリーフには REF／参考サービスの語を書かない**（`item-provenance-pretool.sh` が止める）。完了時ベンチマークは対のF-QLT-8。各スキルの実行手順は当該スキル側。[feedback_verify_absence_before_creating](../../docs/feedback_verify_absence_before_creating.md) [feedback_element_provenance_antibleed](../../docs/feedback_element_provenance_antibleed.md)
+- **F-PRC-12 作業スキル経由の書込＋DS棚卸し宣言（機械強制）。** 公式スキル（`figma-use` 等）は下請け専用。作業スキル（`figma-ds-edit`/`figma-component-design`/`figma-design-create`/`figma-e2e-test`/`figma-modal-open-reorg`/`mikeneko-frontend`）を1つもロードせずにFigmaへ書き込むことを禁止する（機械強制=`workskill-gate-pretool.sh`。免除は閉じた語彙 `figma-exempt: figjam|slides|user-snippet|code-connect` のみ）。DSがある場合は書込前に棚卸しし、各要素の処遇を `~/.claude/gate/ds/<session_id>.md` に宣言する（`DS: fileKey=... lib=...` またはDSが本当に存在しない場合のみ `ds-none-because: <実測根拠>`、各要素は `PLAN: <要素名> -> reuse:<node-id>` / `-> new-component:<理由>` / `-> raw:<コード>:<なぜコンポ化しないかの根拠>` の**3択**で1行ずつ）。**既定は reuse か new-component で、raw は「コンポ化しない」ことを台帳に載せて可視化する例外票**——黙って生フレームを使う口ではない（ノード名も `raw:<コード>` にリネームし、監査の raw 件数とN=N突合）。**`reuse:`/`new-component:` の値に `raw:` を埋め込む書き方は機械的に不正**（実測: 逃げ場を書式から消した結果、実運用では `reuse:<node-id> (raw:<コード>)` と正規票へ弁明を埋め込む形で回避され、書式は通るが実態は生フレームになっていた。塞ぐのでなく正面の票にして可視化する方針へ変更）。委譲時はブリーフ本文にDSの fileKey と流用候補 node-id を明記する（`scope-gate-pretool.sh` の ## DS セクション＋substring突合で機械強制。今回の事故は入口スキルは通したが作業スキルをロードせず、かつ実装ワーカーがDSの存在を知らないまま生フレームで組んだこと）。
+
+### 解釈系
+- **F-INT-1 空間/レイアウト語（padding・余白・端・幅いっぱい・詰める・揃える・はみ出す等）を含む指示は、委譲・着手の前に「node-id.プロパティ: 現在値→目標値」の錨付き差分へ翻訳してからでないと着手・委譲禁止。** 同プロパティが祖先チェーン上の複数ノードに存在＝定義上多義→候補を期待見た目つきで提示し1問確認、返答まで停止。一意でも錨解釈を1行明示（黙って解釈しない）。ワーカーへのブリーフは「ユーザー逐語／メインの錨付き解釈／観測述語」の3フィールド分離、ワーカーは現物構造が解釈と矛盾したら実装せず差し戻す。〔反面教師: 「左右paddingなし」をテキスト列内FILLと誤訳し数ラウンド空転・信頼喪失〕[feedback_figma_perceive_before_delegate](../../docs/feedback_figma_perceive_before_delegate.md)
+- **F-INT-2 意図充足の検証対象はレンダリング×ユーザー逐語のみ（知覚は委譲不可）。** 委譲の前後でメイン自身が対象の get_screenshot＋get_metadata を取り（before接地・after確認）、受入条件は「レンダリングスクショ上で観測できる述語」で書く（プロパティ名px値でなく）。完了宣言は自分で取ったafterスクショと逐語の突合後のみ。**ワーカー報告・決定論監査pass=true・独立レビュー全passは規約/仕様適合であって"意図充足"の根拠に引用禁止**（F-QLT-6の代理指標原則を意図充足にも複製）。レビュー依頼にはユーザー逐語を必須添付し、spec-pass（仕様どおりか）とintent-pass（逐語＋スクショで元意図を満たすか・スクショ根拠必須）を分離判定させる。[feedback_figma_perceive_before_delegate](../../docs/feedback_figma_perceive_before_delegate.md)
+
+## 各スキルの最終ゲート対応表
+
+4スキルの最終ゲートの俯瞰索引。**正本の手順・合格基準は各スキル本文のゲート一覧**(本表は発火§と要旨のみ)。SOTは全スキル・全工程で常に効く。
+
+- **ds-edit**: 一括承認〔工程3末・判断が要る分岐のみ〕/全件レビュー=逆差分監査+OOUI整合+auto-layout整合〔工程5・6〕/instance実体監査+F-CMP-5監査〔工程6・構造確認〕+**F-CMP-6重複監査〔工程6の最後＝F-CMP-7のrun1+run2・成果物ルート配下のクラスタのみコンポ化or`raw:`宣言〕**+**バインド監査〔決定論・工程4末/5/6・`scripts/audit-ds-binding.js` pass=true＝全TEXT丸ごとテキストスタイルバインド・部分/未バインド0・非INSTANCE生fill/stroke0。フォント/サイズのみの部分バインドも不合格〕**+**意図充足ゲート〔委譲不可・自分・工程1(before)/6(after)・メイン自身のスクショで逐語×レンダリング突合、F-INT-1/2〕**+**F-PRC-11参照ファースト〔工程1・刷新/restyle/新視覚判断時のみREF宣言〕**+**F-QLT-8ベンチマークreport〔工程6・F-QLT-6と同時に全件・全所見処分表〕**
+- **component-design**: 全property組合せテスト〔全組合せ破綻0・dead space無し〕/既存使用箇所への影響レビュー〔公開前・破壊的伝播なし〕+**F-PRC-11参照ファースト〔軸設計前の現物確認段・UIパターン名検索〕**+**F-QLT-8ベンチマークreport〔全組合せ並べ完成後・工程7と並走・入力=全組合せ並べスクショ＋代表使用文脈・画面文脈由来のノイズ所見は(b)根拠付き棄却で吸収〕**
+- **design-create**: 一括承認〔§4・表A-D+要素allowlist+proc:/abs:/raw:例外〕/逆差分監査〔§8(e)〕/OOUI逆監査〔計2回=配線前(構造のみ)+§8(f)〕/ページ編成逆監査〔§8(g)〕/auto-layout厳守逆監査〔§8(h)〕/instance実体監査+F-CMP-5監査〔§7・§8(b)〕/**F-CMP-6重複監査〔§8(i)・同名/同構成frame出現数を実測、≥2はコンポ化か`raw:`宣言が無ければ不合格〕**+**F-PRC-11参照ファースト〔工程1・TWIN宣言と同時にREF宣言〕**+**F-QLT-8ベンチマークreport〔§8(l)・最終スクショ確定直後にgenerate発火→(a)〜(k)と並走→全所見処分表〕**
+- **e2e-test**: 体験E2E〔盲目セルフプレイで達成可否/離脱点/真因(UX欠陥か未配線か)を切り分け、設計は直さずハンドオフ〕→レポート
+
+## スキル成長規約(本ファミリーを書き足す/直すとき)
+
+mikeneko-frontendの『スキル永続化の自戒』の輸出。
+
+- 環境依存の事実命題(「〜は無い」「〜は使えない」等)をスキル本文に埋めない。埋めてよいのは**検証手順**のみ(事実は変わる、手順は残る)。
+- 事故対応は「1事故=1ルール行の追加/修正+`メモリリンク`」に固定。物語(経緯・台詞・顛末)を本文に書かない。
+- 失敗直後に作成/改訂したスキルは「失敗の再現装置」疑いで隔離レビュー(フレッシュな別エージェントに読ませてから採用)。
+- サイズ予算: 入口17KB/ワーカー40KB。超過したら圧縮してから足す。
+
+## 関連メモリ / 参照
+
+- 入口/ディスパッチャは [mikeneko-figma](../../skills/mikeneko-figma/SKILL.md)。振り分け対象の各スキル: [figma-ds-edit](../../skills/figma-ds-edit/SKILL.md) / [figma-component-design](../../skills/figma-component-design/SKILL.md) / [figma-design-create](../../skills/figma-design-create/SKILL.md) / [figma-e2e-test](../../skills/figma-e2e-test/SKILL.md)
+- 個別の事故メモリは各ルール行にインライン付与済み(重複索引は持たない)。
