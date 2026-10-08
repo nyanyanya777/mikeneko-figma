@@ -1,6 +1,6 @@
 ---
 name: figma-ds-edit
-description: Use when editing or reviewing ANY Figma design / design-system file — applying text styles & color/typography variables, replacing raw frames with components, restyling, or any multi-step Figma change. Enforces a discover-first, team-based workflow (recon → inventory → plan/gate → implement → full-coverage review), file-agnostic variable-binding rules, and manager gates that prevent creating duplicate components or concluding "X doesn't exist" from empty searches.
+description: Use when editing or reviewing ANY Figma design / design-system file — applying text styles & color/typography variables, replacing raw frames with components, restyling, or any multi-step Figma change. Enforces a discover-first, size-tiered workflow (recon → inventory → plan/gate → implement → full-coverage review), file-agnostic variable-binding rules, and manager gates that prevent creating duplicate components or concluding "X doesn't exist" from empty searches.
 ---
 
 # Figma デザイン/DS 編集の作業標準
@@ -9,9 +9,11 @@ description: Use when editing or reviewing ANY Figma design / design-system file
 **いつ発火するか**: テキストスタイル・色/タイポ変数の適用、生フレーム→コンポーネント差し替え、リスタイル、その他あらゆる多段Figma変更・レビューのとき。
 **何を出力するか**: 発見ファーストで棚卸し→計画→実装→全件レビューを経た、生値ゼロ・instance実体保証・スコープ厳守の編集と、正直なカバレッジ報告。
 
-Figmaの編集・レビューはこの手順・基準・編成で回す。実行は全部サブエージェントに委譲し、**自分はマネジメント（割当・ゲート判定・全件カバレッジ確認・完了可否）だけ**を握る。
+Figmaの編集・レビューはこの手順・基準で回す。**誰が手を動かすかは規模で決める（F-TEAM-0→正本は入口）**: 小はメインが実装まで行い、別の目は工程6の判定役だけ（工程5の独立レビューは省く）。中はメインが実装まで行い、別の目は工程5の独立レビューと工程6の判定役。大はチームに委譲し、**メインはマネジメント（割当・ゲート判定・全件カバレッジ確認・完了可否）**を握る。メインが最上位モデルでないときは、小・中でも実装を委譲する。
 
-**凡例**: F-* は共通禁止事項のルールID。**規範の正本は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) §共通の禁止事項のみ**、本スキルは一行宣言＋固有の運用・検証だけを持つ（規範本文は再掲しない）。番号表記は **丸数字①〜⑥＝ロール／アラビア数字＝工程**。
+この本文は流れ・鉄則・合格条件だけを持ち、詳しい手順は `references/` に置く（末尾の索引に、いつ読むかを書いてある。その工程に入るときに読む）。
+
+**凡例**: F-* は共通ルールのルールID。**規範の正本は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) §共通ルールのみ**（本文中の「入口」「正本は入口」は、mikeneko-figma-rules を指す）、本スキルは一行宣言＋固有の運用・検証だけを持つ（規範本文は再掲しない）。番号表記は **丸数字①〜⑥＝ロール／アラビア数字＝工程**。
 
 ## 適用範囲と境界
 
@@ -25,28 +27,46 @@ Figmaの編集・レビューはこの手順・基準・編成で回す。実行
 
 ## 鉄則（不可侵原則・最優先・全工程共通）
 1. **発見ファースト・決め打ち禁止。** トークン名・値・ノードIDはファイルごとに違う。編集前に必ずそのファイルの実体を棚卸ししてから動く。
-2. **「Xは存在しない」と断定して新規作成しない（F-PLC-3→正本は入口）。** 固有の積極確認手順は §棚卸し runbook。
-3. **生値を残さない（F-QLT-5→正本は入口。固有運用: §色・タイポ変数ルール）。** 直書きのhex・font-size・line-height・font-familyは禁止。すべて変数かテキストスタイル参照。見つけ方・割当は §色・タイポ変数ルール。**テキストは名前付きテキストスタイルを"丸ごと"バインド（textStyleId適用）＝フォントだけ/サイズだけ/一部セグメントだけの部分バインド・手動一致・生フォント据え置きは全て不合格（未バインド扱い）。** 専用サイズ段が無くても近い段を当てる（据え置き禁止）、迷えば実装前に相談。決定論監査＝`scripts/audit-ds-binding.js`。[feedback_figma_always_bind_text_style](../../docs/feedback_figma_always_bind_text_style.md)
+2. **「Xは存在しない」と断定して新規作成しない（F-PLC-3→正本は入口）。** 固有の積極確認手順は [inventory](references/inventory.md) §棚卸し runbook。
+3. **生値を残さない（F-QLT-5→正本は入口。固有運用: [variables](references/variables.md) §色・タイポ変数ルール）。** 直書きのhex・font-size・line-height・font-familyは禁止。すべて変数かテキストスタイル参照。見つけ方・割当は [variables](references/variables.md) §色・タイポ変数ルール。**テキストは名前付きテキストスタイルを"丸ごと"バインド（textStyleId適用）＝フォントだけ/サイズだけ/一部セグメントだけの部分バインド・手動一致・生フォント据え置きは全て不合格（未バインド扱い）。** 専用サイズ段が無くても近い段を当てる（据え置き禁止）、迷えば実装前に相談。決定論監査＝`scripts/audit-ds-binding.js`。[feedback_figma_always_bind_text_style](../../docs/feedback_figma_always_bind_text_style.md)
 4. **検証はサンプルでなく全件被覆。** 代表1枚で合格にしない。触った全要素を見る／実体を当たる。未確認を「確認済み」と言わない。
-5. **役割で選ぶ、見た目で選ばない（F-QLT-1）。** 「意味/役割→トークン」で割り当てる → §色・タイポ変数ルール。
+5. **役割で選ぶ、見た目で選ばない（F-QLT-1）。** 「意味/役割→トークン」で割り当てる → [variables](references/variables.md) §色・タイポ変数ルール。
 6. **報告は正直に。** 残課題を隠さない。謝辞・先回りの正当化・premise未検証での remedy 約束をしない。確認→事実を直す。
-7. **見た目が部品なら実体も部品＝手描き偽装禁止（F-CMP-2→正本は入口）。** 固有運用: 着手前に②棚卸しでDS実体を索引→在れば必ず instance 化。手描きの例外は §棚卸し runbook の NOT FOUND 基準（全Nページ走査済み）＋エスカレーションのみ（その時も**既定はローカルComp化してから使用**。Comp化しない場合は台帳に`raw:<コード>`＋根拠1行を宣言（例外ノードはノード名を`raw:<コード>`に）=F-CMP-5、→入口§部品系）。検証＝§標準オーダー6 の instance実体監査、事故文脈＝§やってはいけない。DSに無い部品のComp化の寄り道先=[figma-component-design](../../skills/figma-component-design/SKILL.md)（票の呼称はdesign-createの`new-comp:`と共通）。
-8. **対象範囲にない要素を勝手に足さない＝出典default-deny／アンチブリード／良かれは提案へ（F-SRC-1・F-SRC-2・F-SRC-3→正本は入口）。** 固有の逆向き突合＝§全件レビュー(工程5・6) の逆差分監査。
+7. **見た目が部品なら実体も部品＝手描き偽装禁止（F-CMP-2→正本は入口）。** 固有運用: 着手前に②棚卸しでDS実体を索引→在れば必ず instance 化。手描きの例外は [inventory](references/inventory.md) §棚卸し runbook の NOT FOUND 基準（全Nページ走査済み）＋エスカレーションのみ（その時も**既定はローカルComp化してから使用**。Comp化しない場合は台帳に`raw:<コード>`＋根拠1行を宣言（例外ノードはノード名を`raw:<コード>`に）=F-CMP-5、→入口§部品系）。検証＝§標準オーダー6 の instance実体監査、事故文脈＝[donts](references/donts.md) §やってはいけない。DSに無い部品のComp化の寄り道先=[figma-component-design](../../skills/figma-component-design/SKILL.md)（票の呼称はdesign-createの`new-comp:`と共通）。
+8. **対象範囲にない要素を勝手に足さない＝出典default-deny／アンチブリード／良かれは提案へ（F-SRC-1・F-SRC-2・F-SRC-3→正本は入口）。** 固有の逆向き突合＝[review](references/review.md) §全件レビュー(工程5・6) の逆差分監査。
 9. **編集対象は「どのオブジェクトのどのビュー（collection⇄single）か」で捉え、モードレス整合（proc退行禁止）を壊さない（F-OOUI-1〜8→正本は入口）。** 追加/変更要素が他オブジェクトへの参照やロール別の出し分けなら、既存の関係・操作権限と食い違わせない。 同じオブジェクトの操作が画面間で一貫しているのが正。ビュー種別分類・proc:新設は design-create へ委譲（§適用範囲）。[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)
-10. **余白・間隔はauto-layoutのgap/paddingで持つ＝Spacer禁止・全コンテナauto-layout（F-STR-1・F-STR-2→正本は入口。機械判定基準・監査スクリプトも入口F-STR-2）。** 固有運用: 編集・restyle・置換時は間隔を itemSpacing/padding へ移行。実検証＝§全件レビュー(工程5・6) の auto-layout整合観点。
+10. **余白・間隔はauto-layoutのgap/paddingで持つ＝Spacer禁止・全コンテナauto-layout（F-STR-1・F-STR-2→正本は入口。機械判定基準・監査スクリプトも入口F-STR-2）。** 固有運用: 編集・restyle・置換時は間隔を itemSpacing/padding へ移行。実検証＝[review](references/review.md) §全件レビュー(工程5・6) の auto-layout整合観点。
 11. **知覚（着手前の現物スクショ確認・完了前の逐語×レンダリング突合）は委譲不可のマネージャー本務。** テキスト報告や監査pass=trueを現物確認の代わりにしない（F-INT-2→入口）。
 
 ## 標準オーダー（0→7）
-- **0. 前提確定** — URL/node-id・対象範囲・「何を満たせば完了か」を一文化。曖昧な分岐だけ先に確認。**node-id 指定は in-place・複製しない（F-PLC-2→正本は入口）。新規frameの配置は既存のオブジェクト単位編成に従う（F-PLC-1・F-PLC-4、委譲権限は §適用範囲）。**
-- **1. 現物確認＋視覚言語抽出（読み取り）** — 対象の `get_screenshot`＋`get_metadata`。結論より先に実物と構造を見る。**既存プロダクトの画面を刷新するときは、姉妹画面（実アプリ/既存Figma画面）を視覚SOTとして観て言語抽出**（色の使い所＝アクセントか塗り面か・カード様式・バッジ形状・余白・アプリ枠の有無）。その語彙内で編集する＝F-QLT-7（判定は工程6、正本→入口§品質系）。**刷新/restyle等の新しい視覚判断を伴う編集のときは、姉妹画面の視覚SOT抽出と同時に参照ファースト＝REF宣言（F-PRC-11 → 入口§進め方系）**: `lazyweb_search`で実参照UIを1〜3件取得し《クエリ／参照名／なぜ良いか根拠1〜3行＝構造の言語／`[REF:]`タグ》で固定。TWIN=視覚SOT／REF=設計根拠で役割別。**バインド修正等の機械的編集は対象外**（新視覚判断が無い編集ではF-PRC-11は発火しない）。
-- **2. 棚卸し（読み取り）** — 既存コンポーネント/変数/テキストスタイルを全走査で積極列挙（§棚卸し runbook）。
-- **3. 計画＋ゲート判定〔委譲不可・自分〕** — 編集分類（見出し/本文・既存差し替え/新規作成要・インスタンス内部=触らない）＋可逆性トリアージ。驚く結論は独立検証してから採用。本当に判断が要る分岐だけユーザー確認。**＋処遇の割り付けはここで確定する（工程4のブリーフまで先送りしない）**: 工程2の棚卸し結果を突き合わせ、追加/置換する要素を1つずつ `reuse:<node-id>` / `new-component:<理由>` / `raw:<コード>:<なぜコンポ化しないかの根拠>` の3択に割り付け、`~/.claude/gate/ds/<session_id>.md` に `PLAN:` 行として書く（F-PRC-12→正本は入口。`workskill-gate-pretool.sh` が書込直前に書式を機械検査）。**割り付けを実装直前まで決めないと「手を動かしながら生フレームで済ませる」に倒れる**——決めるのは設計段階の仕事。`reuse:`/`new-component:` の値に `raw:` を埋め込むのは機械的に不正（例外なら raw: 票で正面から宣言し、ノード名も `raw:<コード>` にリネーム）。**DSに無い部品が要ると判明したらここで [figma-component-design](../../skills/figma-component-design/SKILL.md) へ寄り道**（`new-component:` 票→部品設計→IDを埋め戻して工程4へ戻る。手描き偽装で代用しない）。**刷新/restyle等でF-QLT-6の判定が発火する編集は、ここで `MAIN: <既存の操作ラベル、無ければなし>` も宣言する**（そのビューの主導線操作。判定材料はF-QLT-6(a)、正本→[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§品質系）。
-- **4. 実装（書き込み）** — `/figma-use` 遵守。バッチ＋各段自己スクショ。**Figma書き込みは状態を持つので逐次 or 対象ノードを重ねない領域分割**（同一ファイル同時書き込み禁止）。**実装末に `scripts/audit-ds-binding.js` を自走し pass=true を確認**（未バインド/部分バインド/生値（色・タイポに加えspacing/radius/effect＝BIND-SPACE/BIND-RADIUS/BIND-EFFECT）が1件でも残れば実装未完＝レビューに回さない。監査範囲は今回触ったノード）。**ブリーフ必須フィールド（F-PRC-12→正本は入口）: ①使用DSライブラリの fileKey ②棚卸し（工程2）で見つけた流用候補 node-id ③各要素の処遇（reuse/new-component）。** ワーカーがDSの存在を知らないまま実装する事故の再発防止（機械強制: `scope-gate-pretool.sh` の ## DS セクション＋`workskill-gate-pretool.sh` の書込直前ゲート）。
-- **5. 独立レビュー（読み取り・全件）** — 実装者と別個体・敵対的。スコープを領域分割して全数チェック。
-- **6. 自分の目で最終確認〔自分のゲート〕** — 編集した全カード/全要素を全件確認。件数突合（編集N＝確認N）。**スクショの見た目一致だけで合格にしない**：**instance実体監査**＝部品に見える各要素の node type が `INSTANCE`（正しいmainComponentを指す・detach無し）であることを確認。**機械監査スクリプト `~/.claude/skills/mikeneko-figma/scripts/audit-structure.js`（use_figma で実行）は偽装疑い（非INSTANCEが部品名を名乗る）の機械検出まで。mainComponent一致・detach無しの照合は手動 `get_metadata` の1件ずつ走査が必須**（スクリプトでは検査できない）。見た目が正しくても FRAME/TEXT の手描き偽装は不合格（F-CMP-2・鉄則7）。＋F-CMP-5: 自分が追加/置換した範囲のスタイル付き非instance=0件（宣言例外除く）・instance率分数報告。既存負債はスコープ外既知のまま（§スコープ規律）。＋**バインド監査（決定論）**＝`scripts/audit-ds-binding.js` を走らせ pass=true（全TEXTが名前付きテキストスタイルに丸ごとバインド・部分/未バインド0・非INSTANCEの生fill/stroke0・spacing/radius/effect生値0＝BIND-SPACE/BIND-RADIUS/BIND-EFFECT）。フォントのみ/サイズのみの部分バインドも BIND-TEXT で不合格＝これは自己申告でなく機械で判定。＋**F-QLT-6 完成度ゲート**: 刷新/restyle系の編集では、編集後の実スクショ＋機械層のfactsを**Fableサブエージェントに直接渡し**、MAIN(primary処理の操作要素総数1以下・1ならそれがMAIN、閲覧専用は`MAIN: なし`で0が合格)の主役化・平坦/過剰の不在(アクセント色は操作要素以外の塗り面に不可)・明度階層(機械層の段数を証拠に差の効きを判定)・タイポ階層(F-OOUI-1と同条件のPRIME＋見出し/本文/補助の区別)を判定させる（自分の目のみでの自己判定は不可＝レビューに数えない）。「情報が置いてあるだけ」で視覚設計が無い=不合格、不足・過剰の両方向を不合格にする。変数バインド/AA/instance実体が全緑でも"完成デザイン"の代理指標にしない（正本→[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§品質系 F-QLT-6）。**バインド是正等、新しい視覚判断を伴わない機械的な編集はこのゲートの代わりに、編集前後のスクショで視覚回帰を判定し`regression:`行を残す**（免除の口は作らない）。＋**F-QLT-7 既存一貫性ゲート**: 既存プロダクトの画面を刷新するときは、着手前に姉妹画面（実アプリ/既存Figma画面）を視覚SOTとして観て言語抽出し、完了前に成果と姉妹画面の実スクショを両方**Fableサブエージェントに渡し**「同じプロダクトに見えるか」を判定させる。青等アクセント色の塗り面転用・既存に無いdevice発明・DSファイル単独で起こした浮き・兄弟コンテナのspacing揃いや列数/情報量が姉妹画面から外れていることは不合格（正本→[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§品質系 F-QLT-7）。**(F-QLT-6/7とも)Fableに渡すのはスクショ画像＋機械層のfacts＋`MAIN:`/`PRIME:`宣言＋判定基準の一行要約**（F-QLT-7は姉妹画面スクショも同梱。文脈最小化）。判定役は宣言を読む前にスクショと数字だけで主導線候補と最大強調を挙げ、その後に照合する。verdictの下に**フレーム×観点の`pass|fail＋根拠`行**を残す（正本→[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§品質系 F-QLT-9）。＋**F-CMP-7 構造監査（3run・順序固定）**: 工程6の**最後に** `scripts/audit-structure.js` を入口の3run表どおり実走する（run1=複製範囲→run2=親辿り→**run3=F-CMP-5スコープを最後に**）。**セッション最後のuse_figmaがrun3でないとStopフックが必ずBLOCKする**ので、他の確認作業を後ろに置かない。＋**F-QLT-8 業界ベンチマークreportゲート**: 工程6でF-QLT-6と同時（実スクショを見る全ケース）に、工程6冒頭で `lazyweb_generate_report`（編集後スクショ＋プロダクト文脈＋ゴール）を発火し既存監査と並走ポーリング。返る全所見に処分表（(a)修正済み/(b)根拠付き棄却＝一次情報で反証・破壊系既定棄却/(c)ユーザーへエスカレ）が付くまで完了不可。report良好は完成の代理指標にしない（F-QLT-6/7別途必須）。不通時は`lazyweb_health`→再試行→ユーザーエスカレのみが免除（自動スキップ禁止＝fail-closed）。正本→[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§品質系 F-QLT-8。
-- **7. 正直な報告** — 変更点・カバレッジ・残課題＋**`F-QLT-8: reportURL＋所見N件→fixed x/棄却 y/エスカレ z` 行**＋**`F-CMP-AUDIT cmp:0 fcmp5:pass ...` 行（工程6で実走させた出力の転記。F-CMP-7・Stopフックが機械照合）**を明示。
+- **0. 前提確定** — URL/node-id・対象範囲・「何を満たせば完了か」を一文にする。曖昧な分岐だけ先に確認する。規模を宣言する（`SIZE:`・F-TEAM-0）。案件の DESIGN.md があれば読む（好みの記録は小でも読む）。中・大は、実物を確かめて3行を依頼者に見せ、刷新なら代表の1画面を先に直して見せる（F-PRC-13・14 → [context](../../skills/mikeneko-figma/references/context.md)）。**node-id 指定は in-place で編集し、複製しない（F-PLC-2）。新しいフレームの配置は、既存のオブジェクト単位の編成に従う（F-PLC-1・F-PLC-4。委譲権限は §適用範囲）。**
+- **1. 現物確認と視覚言語の抽出（読み取り）** — 対象の `get_screenshot`＋`get_metadata` を自分で取り、結論より先に実物と構造を見る（before の接地＝F-INT-2）。
+  - 既存プロダクトの画面を刷新するときは、姉妹画面（実アプリか既存Figma画面）を視覚の基準として見て言語を抽出し（色の使い所、カード様式、バッジ形状、余白、アプリ枠の有無）、その語彙の中で編集する（F-QLT-7。判定は工程6）。
+  - 刷新や、色・太さ・線の強さ・余白を直す編集では、見本と成果物を測る（小の余白の直しは、成果物の中の揃いだけでよい）（F-QLT-10 → [tone-measure](../../skills/figma-design-create/references/tone-measure.md)。Web の見本はここでブラウザで測る。Figma 上の計測は use_figma を使うので、工程3の `PLAN:` 宣言（承認が要るときはそのあと）を済ませた工程4の最初と、工程6の判定の前に行う）。
+  - 新しい見た目の判断を伴う編集のときだけ、REF宣言をする（F-PRC-11）。バインド修正などの機械的な編集は対象外。
+- **2. 棚卸し（読み取り）** — 既存の部品・変数・テキストスタイルを全走査で列挙する。→ [inventory](references/inventory.md)
+- **3. 計画とゲート判定〔委譲しない〕** — 編集を分類し（見出し/本文、既存の差し替え、新規作成が要るもの、インスタンス内部＝触らない）、可逆性でトリアージする。驚く結論は、独立に検証してから採用する。本当に判断が要る分岐だけ、依頼者に確認する。役割とトークンの割り当ては → [variables](references/variables.md)
+  - **処遇の割り付けはここで確定する（実装の直前まで先送りしない）**: 工程2の結果と突き合わせ、追加・置換する要素を1つずつ `reuse:<node-id>` / `new-component:<理由>` / `raw:<コード>:<なぜコンポ化しないかの根拠>` の3択に割り付け、`~/.claude/gate/ds/<session_id>.md` に `PLAN:` 行として書く（F-PRC-12。`workskill-gate-pretool.sh` が書き込みの直前に書式を検査する）。`reuse:`/`new-component:` の値に `raw:` を埋め込まない（例外は raw: の票で宣言し、ノード名も `raw:<コード>` にする）。
+  - **DSに無い部品が要ると分かったら、ここで [figma-component-design](../../skills/figma-component-design/SKILL.md) へ寄り道する**（`new-component:` 票→部品設計→ID を埋め戻して工程4へ。手描きで代用しない）。
+  - 刷新など F-QLT-6 の判定がある編集は、ここで `MAIN: <既存の操作ラベル。無ければ なし>` も宣言する。
+- **4. 実装（書き込み）** — `/figma-use` に従う。段を切り、各段で描画を自分で見る。Figma への書き込みは状態を持つので、逐次で行うか、対象ノードが重ならない領域に分ける（同じファイルへ同時に書き込まない）。
+  - **実装の末尾で `scripts/audit-ds-binding.js` を流し、pass=true を確かめる**（未バインド・部分バインド・生の値〔色・タイポ・spacing・radius・effect〕が1件でも残れば実装未完で、レビューに回さない。範囲は今回触ったノード）。
+  - **委譲するときのブリーフの必須項目（F-PRC-12）**: ①使う DS ライブラリの fileKey ②工程2で見つけた流用候補の node-id ③各要素の処遇（reuse/new-component）。機械強制は `scope-gate-pretool.sh` の ## DS セクションと `workskill-gate-pretool.sh`。
+- **5. 独立レビュー（読み取り・全件）** — 規模が中・大のとき。実装した文脈を持たない別エージェントが、範囲を領域に分けて全数を見る。→ [review](references/review.md)
+- **6. 自分の目で最終確認〔委譲しない〕** — 決定論監査を先に通してから判定役を呼ぶ（F-PRC-9）。use_figma で流す計測と監査は、すべて (f) の run3 より前に済ませる。
+  - (a) 編集した全カード・全要素を全件確認し、件数を突合する（編集N＝確認N）。スクショの見た目が合っているだけで合格にしない。
+  - (b) **instance 実体監査**: 部品に見える各要素が `INSTANCE` で、正しい mainComponent を指し、detach されていない。`scripts/audit-structure.js` が機械で見つけるのは偽装の疑い（非INSTANCEが部品名を名乗る）まで。**mainComponent の一致と detach 無しは、手動の `get_metadata` で1件ずつ確かめる。** 見た目が正しくても、FRAME/TEXT の手描きは不合格（F-CMP-2・鉄則7）。F-CMP-5: 自分が追加・置換した範囲に、スタイルを持つ非 instance が0件（宣言した例外を除く）。instance 率を分数で報告する。既存の負債はスコープ外の既知事項のまま（→ [review](references/review.md)「スコープ規律」）。
+  - (c) **バインド監査**: `scripts/audit-ds-binding.js` が pass=true（F-QLT-5。フォントだけ・サイズだけの部分バインドも不合格）。
+  - (d) 逆差分監査、OOUI・関係と操作権限・auto-layout の整合 → [review](references/review.md)
+  - (e) **意図充足**（F-INT-2）: 自分で取った after のスクショで、「依頼者の逐語→観測述語→観測結果」を3列で突合する。監査やレビューの pass を、意図を満たした根拠に使わない。
+  - (f) **F-CMP-7 の3run**（run1 複製範囲→run2 親辿り→run3 F-CMP-5）。手順の正本は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) の3run表。ds-edit での run1 の範囲は、触った成果物が乗る親コンテナかページ。同じ型の既存クラスタが別のコンテナや別ページにあるなら、そこも含める（比較相手を含まない範囲で測ると run1 が無意味になる）。成果物を含まない既存の負債クラスタは、スコープ外の既知事項として報告する。**セッション最後の use_figma が run3 でないと、Stopフックが必ず BLOCK する。** 判定役は use_figma を使わないので、3run のあとに呼んでよい。判定役に落とされて書き直したら、3run をやり直す。
+  - (g) **判定役**（F-QLT-9）: 刷新など新しい視覚判断のある編集は、F-QLT-6（完成度）と F-QLT-7（姉妹画面と並べて同じプロダクトに見えるか）を採点させる。バインド是正・文言など新しい視覚判断のない編集は、採点の代わりに before/after の視覚回帰を判定させ `regression:` 行を残す。色・太さ・線・余白を直した編集は、F-QLT-10 の計測結果も渡す。好みの記録があれば、それも渡す。渡すものと verdict の書式は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) の F-QLT-9。
+  - (h) 業界ベンチマーク report（F-QLT-8）は、規模が大のとき、または依頼者が求めたときだけ。生成に数分かかることがあるので、最終スクショが決まったらすぐ `lazyweb_generate_report` を発火し、(a)〜(g) と並走でポーリングする。
+- **7. 正直な報告** — 依頼者に言われて直したことは、DESIGN.md の好みの記録に足してから報告する。変更点、カバレッジ（対象◯件／確認◯件）、残課題。`F-QLT-6 verdict:` と `F-QLT-7 verdict:` の2行（機械的な編集は `regression:` 行も）、`F-CMP-AUDIT cmp:0 fcmp5:pass ...` の行と `roots:`（工程6で実行した出力の転記）。F-QLT-8 を行ったときは `F-QLT-8: reportURL＋所見N件→fixed x/棄却 y/エスカレ z` の行。色・太さ・線・余白を直したときは段階表（before→after）。最後に [donts](references/donts.md) と突き合わせる。
 
 ## チーム編成
+
+**規模が大のときの編成（F-TEAM-0）。** 小・中はメインが工程0〜7を通して行う。別エージェントに頼むのは、小は工程6の判定役（F-QLT-9）だけ、中は下の⑤レビューと判定役。
 
 **レジェンド（丸数字＝ロール／アラビア数字＝工程）**: マネージャー＝工程0・3・6・7のゲート、⑥シンセサイザ＝横断（特定工程に紐づかない）、他ロールの対応工程は各行に併記。
 
@@ -60,87 +80,36 @@ Figmaの編集・レビューはこの手順・基準・編成で回す。実行
 
 並列・直列: 並列OK=①②⑤（読み取り）。直列/分割必須=④（書き込み衝突回避）。規模で人数増減。反復×段×並列の総数は事前見積（agent上限超過は失敗・浪費）。
 
-## ゲート一覧（委譲不可・承認・突合・逆差分監査・全件レビューの一元索引）
+## ゲート一覧
 
-| ゲート名 | 発火タイミング | 合格基準 | 詳細§ポインタ |
+合格条件の索引。共通ルールで決まっているものは、ルールIDだけを書く（正本は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)）。
+
+| ゲート | いつ | 合格条件 | 詳しい手順 |
 |---|---|---|---|
-| 計画＋ゲート判定〔委譲不可・自分〕 | 工程3 | 編集分類＋可逆性トリアージ完了。驚く結論は独立検証してから採用 | §標準オーダー3／鉄則2 |
-| 一括承認（判断要分岐のみ） | 工程3末 | 本当に判断が要る分岐だけユーザー承認。可逆作業を不可逆と同じ軽さで通さない | §標準オーダー3 |
-| 独立レビュー（全件被覆） | 工程5 | 実装者と別個体・敵対的、触った全要素を全数チェック（代表サンプル禁止） | §全件レビュー |
-| 逆差分監査 | 工程5・6 | 編集後の対象に依頼に無い要素が増えていない（出典が辿れる）。F-SRC-2違反0 | §全件レビュー／鉄則8 |
-| OOUI整合観点 | 工程5・6 | 追加/変更要素がそのビューのオブジェクト構造に属する・モードレス整合不破壊・関係/操作権限と食い違わない | §全件レビュー／鉄則9 |
-| auto-layout整合観点 | 工程5・6 | 触った範囲がAL・Spacer0、既存負債はスコープ外既知 | §全件レビュー／鉄則10 |
-| instance実体監査 | 工程6 | 部品に見える各要素が node type `INSTANCE`（mainComponent正・detach無し）。偽装疑いの機械検出=audit-structure.js、mainComponent一致・detach無しは手動get_metadata必須。＋F-CMP-5: 自分が追加/置換した範囲のスタイル付き非instance=0件（宣言例外除く）・instance率分数報告。既存負債はスコープ外既知のまま（§スコープ規律） | §標準オーダー6／鉄則7 |
-| F-CMP-6重複監査 | 工程6の最後＝F-CMP-7のrun1+run2そのもの（別実行ではない。工程5は観点として持つだけで実走しない） | 手順の正本＝入口の3run表。既存負債クラスタはスコープ外既知 | §全件レビュー／入口§部品系 |
-| コンポ化構造監査〔F-CMP-7・決定論・機械強制〕 | 工程6（**最後の書込の後**）・完了報告 | **手順の正本＝入口の3run表**（範囲・合格条件・順序はそこだけを見る。ここに写すと二重簿記になり腐る）。ds-edit固有: run1の範囲＝触った成果物が乗る親コンテナorページ。**ただし同型の既存クラスタが別コンテナ/別ページにあるならそこも含める**（比較相手を含まない範囲で測るとrun1が無意味になる）。完了報告に run3 の `F-CMP-AUDIT cmp:0 fcmp5:pass ...` 行と `roots:` を転記 | 入口§部品系 F-CMP-7 |
-| 完成度ゲート（脱ワイヤー）〔F-QLT-6〕 | 工程6 | 実スクショ＋機械層factsをFableサブエージェントに渡して判定。刷新/restyle系で、MAIN(primary操作1以下の主役化)・平坦/過剰の不在(アクセント色は操作要素限定)・明度階層(段数は証拠、差の効きを判定)・タイポ階層(PRIME＋見出し/本文/補助の区別)。変数バインド/AA/instance実体の全緑を"完成"の代理指標にしない。不足・過剰の両方向で不合格。ワイヤー的なら不合格。**機械的な編集（新視覚判断を伴わない）はこのゲートの代わりにbefore/after視覚回帰を判定し`regression:`行を残す** | 入口§品質系 F-QLT-6 |
-| 既存一貫性ゲート〔F-QLT-7〕 | 工程1(言語抽出)/6 | 姉妹画面(実アプリ/既存Figma)と成果の実スクショを両方Fableサブエージェントに渡し「同じプロダクトに見えるか」判定。アクセント色の塗り面転用・既存に無いdevice発明・DS単独で起こした浮き・兄弟コンテナのspacing揃いや列数/情報量が姉妹画面から外れていることは不合格 | 入口§品質系 F-QLT-7 |
-| ビジュアル判定の実施証跡〔F-QLT-9〕 | 工程6直後・完了報告 | 書込ツールを呼んだセッションは完了報告に `F-QLT-6 verdict:<fable\|opus>/<task-id>/<pass\|fail>` と `F-QLT-7 verdict:...` の2行が必須。judgeはFableのみ、起動不能時のみ `fable-fail:<原文>` 併記で最新Opus（model:"opus"明示・手順は同一）。**入力はスクショ＋機械層facts＋`MAIN:`/`PRIME:`宣言（F-QLT-7は姉妹画面スクショも）。宣言を読む前にスクショと数字だけで主導線候補と最大強調を挙げてから照合。verdict直下にフレーム×観点の`pass|fail＋根拠`行が必須、機械的編集は`regression:`行**（揃わない合格はF-PRC-8の「合格+証拠」に数えない）。sonnet/figma-reviewer/自分の目は枠を埋めない＝未実施で完了不可。Stopフック `visual-gate-stop.sh` が機械照合 | 入口§品質系 F-QLT-9 |
-| バインド監査ゲート〔決定論・工程4末/⑤/自分〕 | 工程4末・5・6 | `scripts/audit-ds-binding.js`(use_figmaで実行)が **pass=true**。全TEXTの textStyleId 非空(未バインド0)・mixed=部分適用0、非INSTANCEの可視fill/stroke生値0。1件でも不合格＝完了不可。判断の余地なし（"色だけ/サイズだけ/据え置き"を機械で弾く） | §標準オーダー4・6／鉄則3 |
-| 完了ゲート〔自分〕 | 工程6 | 編集N＝確認N の件数突合、各カードのスクショで確認 | §標準オーダー6 |
-| 意図充足ゲート〔委譲不可・自分〕 | 工程1(before)・6(after) | メイン自身のget_screenshotで「逐語→観測述語→観測結果」を3列突合。audit/レビューのpassを意図充足の根拠に代用禁止 | 入口§解釈系 F-INT-1/2 |
-| 参照ファースト（REF宣言）〔F-PRC-11〕 | 工程1・刷新/restyle/新視覚判断を伴う編集のみ | 刷新は二段=サービス段(WebSearchで近い実在サービス2〜3件・出典つき)→UIパターン段(`lazyweb_search`で実参照1〜3件)。各件にクエリ/参照名/構造語の根拠/`[REF:]`タグ。DESIGN.mdが在れば読む。機械的編集(バインド修正等)は対象外 | 入口§進め方系 F-PRC-11 |
-| 業界ベンチマークreport〔F-QLT-8〕 | 工程6冒頭・全件（機械的編集含む） | 工程6冒頭でgenerate発火→既存監査と並走→全所見処分表が埋まるまで完了不可。report良好を代理指標にしない。不通時はfail-closedでユーザーエスカレのみ免除 | 入口§品質系 F-QLT-8 |
+| 計画とゲート判定〔委譲しない〕 | 工程3 | 編集分類と可逆性トリアージが済んでいる。驚く結論は独立に検証済み。`PLAN:` 行が全要素にある | 工程3・鉄則2 |
+| 一括承認（判断が要る分岐だけ） | 工程3の末 | 本当に判断が要る分岐だけ依頼者の承認を取る。不可逆な作業を、可逆な作業と同じ軽さで通さない | 工程3 |
+| バインド監査〔決定論〕 | 工程4の末・5・6 | `scripts/audit-ds-binding.js` が pass=true。全 TEXT の textStyleId が非空、mixed（部分適用）0、非INSTANCEの見える fill/stroke の生の値0、spacing/radius/effect の生の値0。1件でも不合格なら完了不可 | 工程4・6・鉄則3 |
+| 独立レビュー（全件） | 工程5（中・大） | 実装者と別のエージェントが、触った全要素を全数で見る（代表サンプルにしない） | [review](references/review.md) |
+| 逆差分監査 | 工程5・6 | 編集後の対象に、依頼に無い要素が増えていない（出典が辿れる。F-SRC-2 の違反0） | [review](references/review.md)・鉄則8 |
+| OOUI・関係と操作権限の整合 | 工程5・6 | 追加・変更した要素が、そのビューのオブジェクト構造に属する。モードレスの整合を壊していない。関係・操作権限と食い違わない | [review](references/review.md)・鉄則9 |
+| auto-layout の整合 | 工程5・6 | 触った範囲が auto-layout で、Spacer が0。既存の負債はスコープ外の既知事項 | [review](references/review.md)・鉄則10 |
+| instance 実体監査＋F-CMP-5 | 工程6(b) | 部品に見える各要素が `INSTANCE`（mainComponent が正しい・detach 無し）。追加・置換した範囲のスタイルを持つ非 instance が0件。instance 率を分数で報告 | 工程6(b)・鉄則7 |
+| 完了の件数突合 | 工程6(a) | 編集N＝確認N。各カードをスクショで確認 | 工程6(a) |
+| 意図充足〔委譲しない〕 | 工程1（before）・6(e)（after） | 自分で取ったスクショで「逐語→観測述語→観測結果」を3列で突合 | F-INT-1・F-INT-2 |
+| 実測（濃さ・太さ・線・余白） | 工程1（Web の見本）・工程4の最初・工程6 | 刷新や、色・太さ・線・余白を直す編集で、見本と成果物の段階表があり、同じ種類の箱の余白がそろっていて、判定役に渡している | F-QLT-10・[tone-measure](../../skills/figma-design-create/references/tone-measure.md) |
+| 完成度・一貫性・実施証跡 | 工程6(g)・報告 | 判定役の verdict 2行と、フレーム×観点の `pass|fail＋根拠` 行。機械的な編集は `regression:` 行 | F-QLT-6・F-QLT-7・F-QLT-9 |
+| 参照ファースト（REF宣言） | 工程1・新しい見た目の判断を伴う編集だけ | REF宣言がある | F-PRC-11 |
+| 重複監査・構造監査 | 工程6(f)・最後の書き込みのあと | 3run。run1 の範囲は比較相手を含む。完了報告に run3 の `F-CMP-AUDIT cmp:0 fcmp5:pass ...` と `roots:` | F-CMP-6・F-CMP-7 |
+| 業界ベンチマーク report | 工程6(h)・大のとき、または依頼者が求めたとき | 全所見に処分 | F-QLT-8 |
 
-本表は索引のみ（詳細手順は各§に残す・情報は失われない）。
+## 資料の索引（`references/`）
 
-## 詳細・判断基準
-
-### 棚卸し runbook（②の実行手順）
-**鉄則**: 「無い」と書くには積極確認が要る。未確認は「未確認」と明記。
-1. **ページ実数を罠回避で取る** — `get_metadata`(nodeId無し)は浅いルートビューで全ページではない（1ページしか返らない事がある）。鵜呑み禁止。全ページは別経路（ドキュメントルートからのドリル／不正nodeIdのエラーダンプ挙動／最終手段は画面パネルのスクショ）で取得。ページ数の健全性チェック（DSが1ページは走査不足を疑う）。
-2. **各ページをドリルしてコンポーネント本体を拾う** — `get_metadata`(pageId)→再帰。**node typeで `COMPONENT_SET`/`COMPONENT` を拾う**（インスタンスや只のframeと混同しない）。多くのDSはページ毎に専用セクションへ本体を置く。
-3. **各コンポーネントを記録** — id／名前／**バリアント軸と選択肢**／代表バリアントのsymbol id／実寸／`get_screenshot`。
-4. **変数・トークン** — `get_variable_defs`。複数モード/コレクションの**衝突に注意**（light/dark同名等、対象モードでフィルタ。空＝モード違いの可能性で不在と断じない）。
-5. **テキストスタイル** — 代表ノードに `get_design_context` を当て、実使用のスタイル名・バインドを実測。
-6. **公開ライブラリ補足** — `search_design_system`（ただし空＝不在ではない。これは公開ライブラリの変数/スタイルしか索引せず、キャンバス上の未公開コンポーネントは見えない）。
-7. **既知IDの再利用** — 過去棚卸し（メモリ）を seed に使う場合も、消えていないか実体verifyしてから採用。
-
-**出力（プランナー/マネージャーがゲートできる形）**:
-- コンポーネント表: 名前｜本体id｜バリアント軸・選択肢｜所在｜実寸｜スクショ。
-- マッピング表: タスクが要る各部品 → 既存id＋使うバリアント、または **NOT FOUND（全Nページ走査済みの上で）**。
-- カバレッジ証明: 走査ページ数／発見数／未走査・スキップ明記。
-- **エスカレーション**: 重要欠落や驚く不在は、誰かが新規作成する前にマネージャーへ上げる（勝手に作らせない）。
-
-### 色・タイポ変数ルール（ファイル非依存）
-**二層構造**: ルール＝原則＋役割マッピング／具体値＝各ファイルで棚卸しして "役割→トークン" 表を1枚作り、以降それだけ参照。
-
-#### 色
-- primitive/パレット（blue-500, base/* 等の生階調）を直接当てない。**役割名のセマンティックトークン**を当てる（F-QLT-1）。無ければ「セマンティック層が無い」と報告。
-- 最低限ひも付ける役割: 主文字（見出し/本文/値）／補助文字（ラベル/メタ/プレースホルダ/disabled）／リンク・強調／枠・区切り／面(背景/カード/入力)／ブランド主色＋その上の文字／状態色(成功/警告/エラー/情報)。
-- **モード衝突注意**: 複数モード/コレクションがある場合、モード対応のセマンティックトークンをバインドし、特定モード固定のprimitiveを当てない。読むときは対象モードでフィルタ。
-- fillは必ず変数バインド（paintのbound variable）。コントラストAAを役割の組合せで確認（F-QLT-2）。
-
-#### タイポ
-- **名前付きテキストスタイル優先**。役割/サイズに合えば適用。
-- スタイルが無くタイポ変数で表現する文化のファイルなら**変数をバインド**。その際 **font-size と line-height は同じスケール段から必ずペアで**。family/weightもスタイル/変数経由。
-- **役割→スケール段で選ぶ**（heading/body/label/caption…）。任意pxを置かない。必要な段が無ければ「不足」を報告（近似生値を勝手に置かない）。
-
-#### コンポーネント絡み
-- インスタンス内部の色/サイズは**生値で上書きしない。バリアント/プロパティで変える**（変更の伝播を避ける）。実データが入る入力欄等は Filled 系バリアントを使う（Defaultはプレースホルダ淡色になる事がある）。
-
-### 全件レビュー（工程5・6）
-- 編集した全要素を**列挙→全部**を検証対象に（代表サンプル禁止）。広ければレビューをファンアウトし合計で全件カバー。
-- **逆差分監査**: 編集後の対象に、依頼に無い要素が増えていないかを逆向きに突合。出典の辿れない要素（他案件ブリード・スコープ膨張）が出ていたら削除かエスカレーション（F-SRC-2・鉄則8）。
-- **OOUI整合観点（逆差分監査の隣）**: 追加/変更要素がそのビューのオブジェクト構造に属するか（別オブジェクトの混入や動詞frame化でないか）を確認。元々ウィザードの既存ファイルでユーザーが変更対象にしていない場合は、OOUI不適合を「今回スコープ外の既知事項」として報告に留め、勝手にビュー指向へ作り替えない（スコープ厳守・鉄則9）。
-- **関係・操作権限の整合観点（OOUI整合観点の隣・F-OOUI-6/7）**: 追加/変更要素のうち、他オブジェクトへの参照（関連一覧・参照リンク・パンくず・他オブジェクトへの遷移）とロール別の出し分け（非表示・無効化・権限不足状態）について、PRD「8.3 関係」「8.4 多重度」「4.3 利用者×権限」と食い違わないかを確認する。PRDが無ければ既存画面の同種要素と照らす。根拠の見つからない新しい関係・ロールは作らず、ユーザーに1問で聞く。触っていない既存箇所の食い違いは「今回スコープ外の既知事項」として報告に留める（スコープ厳守・鉄則9）。
-- **auto-layout整合観点（OOUI整合観点の隣・鉄則10）**: 触った/差し替えた各コンテナが layoutMode=HORIZONTAL/VERTICAL で、間隔が itemSpacing/padding で表現されているかを get_metadata で構造確認（判定フィールドは入口F-STR-2）。今回追加・置換した範囲に無記名の Spacerノード（fills/strokes/children/text 全て無し・幅or高さだけ）が増えていない、手動x/y・layoutPositioning=ABSOLUTE で間隔を作っていないかを1件ずつ。fill/stroke を持つ divider・instance実体のプレースホルダ枠は誤検出ガードで除外。
-  - **スコープ規律（in-place編集の分際）**: 元々Spacer多用・非auto-layoutで組まれた既存ファイルで、**ユーザーが変更対象にしていない箇所**のSpacer/非ALは、勝手にauto-layout化して作り替えない（スコープ厳守・鉄則9と同型。新規作成にフルで効くゲートは入口F-STR-2→design-create §8(h)）。in-place編集では (i)自分が触った/追加した範囲は必ず gap/padding（Spacer作らない）、(ii)既存の負債は「今回スコープ外の既知事項」として報告、の二分で扱う。
-- **F-CMP-6重複監査（auto-layout整合観点の隣）**: **工程6の最後のF-CMP-7 run1+run2そのもの（別実行ではない。工程5は観点として持つだけで実走しない）**。手順の正本＝[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§部品系 F-CMP-7。成果物を含まない既存負債クラスタはスコープ外既知として報告（§スコープ規律と同型）。
-- 各要素で「実スクショで見た目が約束どおり」＋「バインド/インスタンス実体が正しい」を1件ずつ判定。
-- **カバレッジ明示**: 「対象◯件／確認◯件、各カードのスクショで確認」。間引いたら明記（黙って上限を掛けない）。
-- **fallback注意**: bindが効いていてもAPIの数値/色fallbackは旧リテラルのまま見える事がある。`var(--…)` 参照になっていれば正。リテラルだけ見て誤判定しない。
-
-## やってはいけない（事故からの教訓）
-- 検索/ページ一覧の空振りを「不在」と解釈して新規作成する（F-PLC-3違反。重複生成→手戻り＋信頼喪失）。
-- 驚く結論（DSにコンポーネントが無い等＝定義/ユーザー前提に反する）を検証せず行動に移す。
-- 共有資産への追加・不可逆操作を、可逆な作業と同じ軽さで承認する。
-- レビューを代表サンプルで済ませて全体を保証したつもりになる。
-- 問題報告に「いいご指摘です」等の謝辞・先回り正当化・未検証の約束で応じる。
-- **「自前構成／中身は自前で組む」を口実に、DSに実体がある部品（タブ/入力等）を FRAME+TEXT で手描きする**（F-CMP-2違反・鉄則7。「自前構成」は器〔Dialog等〕の話で、中の部品まで手描きしてよい意味ではない）。固有事故文脈: 検索モーダルのタブをDS Tabsがあるのに手描き→全面差し替えの手戻り。②棚卸し（発見ファースト）の不徹底＋工程6のinstance実体監査を怠ると見逃す。
-- **モードレスなビューをゲート段・ウィザードに作り替える／別オブジェクトの要素を混入させる**（F-OOUI-1〜5・F-SRC-2違反、鉄則9・8。ビュー種別分類・proc:新設の委譲権限は§適用範囲）。
-- **自分が置換/追加した部品の間隔をSpacerノードで作る**（F-STR-1違反・鉄則10。検出仕様＝§全件レビューの auto-layout整合観点）。
-- **専用の段/変数が無いことを口実に、テキストを生フォント据え置き・"色だけ/サイズだけ"の部分バインドで完了する**（明言された中核要件＝丸ごとテキストスタイルバインドを、ワーカー独断で弱い成果物に降格＝繰り返し起きた実事故。規約/スクショ/レビュアー全緑でも素通りした）。近い段を当てるか実装前に相談。決定論検出＝`scripts/audit-ds-binding.js`（BIND-TEXT-1=未バインド・部分適用mixed）。[feedback_figma_always_bind_text_style](../../docs/feedback_figma_always_bind_text_style.md)
+| 資料 | いつ読むか |
+|---|---|
+| [inventory](references/inventory.md) | 工程2。全ページの走査、部品・変数・テキストスタイルの列挙、NOT FOUND と言える条件 |
+| [variables](references/variables.md) | 工程3・4。色とタイポの役割→トークンの割り当て、インスタンス内部の扱い |
+| [review](references/review.md) | 工程5・6。逆差分監査、OOUI・関係と操作権限・auto-layout の整合観点、スコープ規律 |
+| [donts](references/donts.md) | 工程7の前。やってはいけないことの一覧 |
 
 ## 関連メモリ / 参照
 入口(ディスパッチャ) [mikeneko-figma](../../skills/mikeneko-figma/SKILL.md) / 共通禁止事項SOT [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) / [feedback_verify_absence_before_creating](../../docs/feedback_verify_absence_before_creating.md) / [feedback_qa_real_user_outcome](../../docs/feedback_qa_real_user_outcome.md) / [feedback_agent_team_delegate_all](../../docs/feedback_agent_team_delegate_all.md) / [feedback_no_ai_arbitrary_colors](../../docs/feedback_no_ai_arbitrary_colors.md) / [feedback_css_use_variables](../../docs/feedback_css_use_variables.md) / `feedback_figma_component_style` / [feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)

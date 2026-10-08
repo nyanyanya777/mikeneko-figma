@@ -11,7 +11,7 @@ description: Use when you need to E2E-test the EXPERIENCE of a Figma screen/flow
 
 - **やる**: 実ユーザーの達成可否・離脱点の検証。盲目ウォークスルーで「画面に見えるものだけ」で辿れるかを測り、詰まり・誤読・行き止まり・離脱を真因（UX欠陥／未配線／コピー／状態欠落／到達不能／destination欠落／OOUI退行／ページ編成起因）に分類して報告する。
 - **やらない（修正実装）**: 見つけた問題は提案・旗立てに留め、**修正実装はしない**。配置/設計の作り替えは姉妹スキル [figma-design-create](../../skills/figma-design-create/SKILL.md)、in-place是正は [figma-ds-edit](../../skills/figma-ds-edit/SKILL.md) へハンドオフする。このスキルの中で勝手にデザインを編集しない。
-- **実行は全部サブエージェントに委譲**し、自分はマネジメント（目的確定・割当・ゲート判定・全シナリオ被覆確認・合否判定）だけを握る。[feedback_agent_team_delegate_all](../../docs/feedback_agent_team_delegate_all.md)
+- **実行は全部サブエージェントに委譲**し、自分はマネジメント（目的確定・割当・ゲート判定・全シナリオ被覆確認・合否判定）だけを握る。[feedback_agent_team_delegate_all](../../docs/feedback_agent_team_delegate_all.md) このスキルは Figma に書き込まないので、規模による体制の切り替え（F-TEAM-0）の対象外。盲目ウォーカーは、規模にかかわらず常に別エージェントにする。
 - 入口は [mikeneko-figma](../../skills/mikeneko-figma/SKILL.md)。共通禁止事項のSOTは [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)。本スキルは「自分のゲートで実際に検証する項目」だけを持ち、共通規範は入口＋rulesの両方を正典としてルールID（F-*）で参照する。
 
 ## 鉄則（不可侵原則・最優先・全工程共通）
@@ -125,7 +125,7 @@ description: Use when you need to E2E-test the EXPERIENCE of a Figma screen/flow
 ### 真因の切り分けとハンドオフ（オーダー4で詰まりが出たとき・オーダー7の中身）
 
 walker が「次に押すものが分からない／押しても進まない」となったら、⑤判定が地図と照合して分類:
-- **未配線アーティファクト**: 導線は画面上に在る（押せそうに見える）が reaction が張られていないだけ → 真因=未配線、ハンドオフ=配線（design-create §プロトタイプ配線）。**これを「ユーザーが詰まった」と書かない。**
+- **未配線アーティファクト**: 導線は画面上に在る（押せそうに見える）が reaction が張られていないだけ → 真因=未配線、ハンドオフ=配線（design-create 工程6＝[wiring-review](../../skills/figma-design-create/references/wiring-review.md)「プロトタイプ配線」）。**これを「ユーザーが詰まった」と書かない。**
 - **真UX欠陥**: 配線は在るのに walker が導線を見つけられない／誤った要素を押す → 真因=UX欠陥（ラベル誤読・不可視・二重導線等）、ハンドオフ=ds-edit か design-create。
 - **状態欠落**: 空／エラー／権限／ローディング画面が用意されておらず、ユーザーが行き止まる → 真因=状態欠落。
 - **OOUI退行（モード地獄／collection⇄single導線断絶、F-OOUI-1〜5）／ページ編成起因（機能が複数Pageに散って辿れない、F-PLC-4）**: walkerがウィザードに閉じ込められ後戻り・別操作できない、一覧⇄詳細を行き来できない、選択対象が次ビューに継承されない、同一オブジェクトのビューが複数Pageに散在して辿れない → 真因=OOUI退行/ページ編成起因。**修正せず旗を立て、配置/設計の作り替えは design-create、in-place是正は ds-edit へハンドオフ**（[feedback_wireframes_ooui_bound](../../docs/feedback_wireframes_ooui_bound.md)）。検証の向き: **proc:主張フローは歩行で「本当にモードレスに出来ないか」**、**OOUI主張フローは「collection⇄single の往復／モードレス再入が実在するか」**を確かめて報告する。

@@ -10,6 +10,7 @@ description: 設定/管理画面などの「素置きされたモーダル」を
 ## 適用範囲
 
 - **やる**: 既存画面群で、モーダル/ダイアログが「素の白パネルで平置き」され文脈が分からない状態を、カテゴリ別の独立セクションに再編し、各モーダルを"モーダルを開いた状態"で見せる。反復モーダルのコンポーネント化＋状態バリアント化。
+- **体制**: 誰が手を動かすかは規模で決める（F-TEAM-0 → [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§規模と体制）。メインが最上位モデルで、規模が小・中ならメインが実装まで行う。下の「委譲」は、規模が大のとき、またはメインが最上位モデルでないときの分担。
 - **やらない（委譲/別スキル）**: 実装は figma-implementer に委譲。部品の軸設計は figma-component-design、既存への変数/スタイル適用は figma-ds-edit の規律に従う。use_figma は figma-use を前提ロード。
 - **前提**: [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md) の共通禁止事項（F-\*）が全工程で効く。原本非破壊が絶対。
 
