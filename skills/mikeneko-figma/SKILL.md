@@ -18,9 +18,9 @@ description: 自作Figma作業スキルの入口/ディスパッチャ。1問判
 | **既存**の画面/フローが**実ユーザーの目的を達成できるか検証**(体験E2E・盲目セルフプレイ・設計は直さない) | `figma-e2e-test`(+[mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)) |
 | Figmaの画面群をコードへ忠実再現 | `mikeneko-frontend`(正本: `~/.claude/skills/mikeneko-frontend`) |
 
-判定したら、そのスキルの鉄則・標準オーダーに従う。**design-create振り分け時はフレームをいきなり起こさず、ビューインベントリ(オブジェクト×collection/single)とページIA(オブジェクト単位Page)を先に確定**(design-create §0/§3/§8)。
+判定したら、**規模を1行で宣言する（`SIZE: 小|中|大`・F-TEAM-0）**。小・中はメインが実装まで行い、大だけチームを組む（メインが最上位モデルでないときは実装を委譲。正本は [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)§規模と体制）。**案件の DESIGN.md があれば最初に読む。中・大は、実物を確かめて3行を依頼者に見せ、最初の1画面を早く見せる**（F-PRC-13・14 → [context](references/context.md)。依頼者に言われた却下や好みは、言葉のまま DESIGN.md の「好みの記録」に足す）。そのうえで、そのスキルの鉄則・標準オーダーに従う。**design-create振り分け時はフレームをいきなり起こさず、ビューインベントリ(オブジェクト×collection/single)とページIA(オブジェクト単位Page)を先に確定**(design-create §0/§3/§8)。
 
-ロード手順の正本: **0** まずここを通る→**1** 判定表で1問→**2** 1つだけロード(グレーは次§)→**3** 公式は振り分けない→**4** [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)は全分岐で常に併読→**5** design-createは宣言先行(前掲)。
+ロード手順の正本: **0** まずここを通る→**1** 判定表で1問→**2** 1つだけロード(グレーは次§)→**3** 公式は振り分けない→**4** [mikeneko-figma-rules](../../skills/mikeneko-figma-rules/SKILL.md)は全分岐で常に併読→**5** 規模を宣言(`SIZE:`)→**6** DESIGN.md を読み、把握の3行を見せる(中・大)→**7** design-createは宣言先行(前掲)。
 
 ## 迷ったときの切り分け(グレーゾーン)
 
